@@ -1,0 +1,21 @@
+<div class="balance-card">
+  <p class="label">Total Balance</p>
+  <h2 class="balance">${{ balance() | number:'1.2-2' }}</h2>
+
+  @if (monthDifference() !== 0) {
+    <div class="difference" [ngClass]="{
+      'positive': isPositive(),
+      'negative': isNegative()
+    }">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="arrow">
+        @if (isPositive()) {
+          <path d="M7 14l5-5 5 5z"/>
+        } @else {
+          <path d="M7 10l5 5 5-5z"/>
+        }
+      </svg>
+      <span>{{ monthDifference() > 0 ? '+' : '' }}${{ monthDifference() | number:'1.2-2' }} ({{ differencePercent() | number:'1.1-1' }}%)</span>
+      <span class="period">vs last month</span>
+    </div>
+  }
+</div>

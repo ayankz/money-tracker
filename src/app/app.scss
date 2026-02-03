@@ -1,0 +1,14 @@
+nav {
+  a {
+    color: #666;
+
+    &.active {
+      color: #d98e73;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

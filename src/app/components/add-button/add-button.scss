@@ -1,0 +1,24 @@
+.add-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #d98e73;
+  border: none;
+  color: white;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

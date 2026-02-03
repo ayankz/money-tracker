@@ -1,0 +1,8 @@
+<div class="payment-card">
+  <div class="icon-circle">
+    <app-payment-icon [icon]="icon()" [size]="24" />
+  </div>
+  <p class="title">{{ title() }}</p>
+  <p class="amount">${{ amount() | number:'1.2-2' }}</p>
+  <p class="due-date">до {{ dueDate() | date:'MM/dd/yyyy' }}</p>
+</div>
