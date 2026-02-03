@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.payment-card {
+  width: 160px;
+  background-color: var(--primary-light);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  background-color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  app-payment-icon {
+    color: var(--primary-color);
+  }
+}
+
+.title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+
+.amount {
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+}
+
+.due-date {
+  color: var(--text-secondary);
+  font-size: 10px;
+  margin: 4px 0 0 0;
+}

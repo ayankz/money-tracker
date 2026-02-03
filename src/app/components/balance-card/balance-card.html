@@ -14,8 +14,7 @@
           <path d="M7 10l5 5 5-5z"/>
         }
       </svg>
-      <span>{{ monthDifference() > 0 ? '+' : '' }}${{ monthDifference() | number:'1.2-2' }} ({{ differencePercent() | number:'1.1-1' }}%)</span>
-      <span class="period">vs last month</span>
+      <span>{{ monthDifference() > 0 ? '+' : '' }}{{ differencePercent() | number:'1.1-1' }}% this month</span>
     </div>
   }
 </div>

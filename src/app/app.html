@@ -1,29 +1,35 @@
 <router-outlet />
 
 <nav>
-  <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+  <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
-    <span>Главная</span>
+    <span>Home</span>
   </a>
-  <a routerLink="/operations" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+
+  <a routerLink="/operations" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+      <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
     </svg>
-    <span>Операции</span>
+    <span>Activity</span>
   </a>
-  <app-add-button />
-  <a routerLink="/analytics" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+
+  <div class="add-button-wrapper">
+    <app-add-button />
+  </div>
+
+  <a routerLink="/analytics" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
     </svg>
-    <span>Аналитика</span>
+    <span>Stats</span>
   </a>
-  <a routerLink="/planned-payments" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+
+  <a routerLink="/profile" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-item">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
     </svg>
-    <span>Планируемые платежи</span>
+    <span>Profile</span>
   </a>
 </nav>

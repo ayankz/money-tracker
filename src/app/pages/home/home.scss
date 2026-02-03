@@ -1,0 +1,35 @@
+.content {
+  padding: 0 24px 80px 24px;
+}
+
+.upcoming-payments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.section-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+}
+
+.payments-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+
+  // Hide scrollbar
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
+}
+
+.spending-section {
+  margin-top: 32px;
+}

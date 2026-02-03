@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Header } from '../../components/header/header';
 import { BalanceCard } from '../../components/balance-card/balance-card';
 import { UpcomingPaymentCard } from '../../components/upcoming-payment-card/upcoming-payment-card';
+import { SpendingAnalysis } from '../../components/spending-analysis/spending-analysis';
 import type { UpcomingPayment } from '../../models/payment.model';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, BalanceCard, UpcomingPaymentCard],
+  imports: [Header, BalanceCard, UpcomingPaymentCard, SpendingAnalysis],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,6 +15,9 @@ import type { UpcomingPayment } from '../../models/payment.model';
 export class Home {
   protected readonly balance = signal<number>(12500);
   protected readonly monthDifference = signal<number>(850.50);
+  protected readonly monthlyBudget = signal<number>(3000);
+  protected readonly spent = signal<number>(2250);
+
   protected readonly upcomingPayments = signal<ReadonlyArray<UpcomingPayment>>([
     {
       id: '1',

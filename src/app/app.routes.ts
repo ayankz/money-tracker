@@ -21,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'planned-payments',
     loadComponent: () => import('./pages/planned-payments/planned-payments').then(m => m.PlannedPayments)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
   }
 ];

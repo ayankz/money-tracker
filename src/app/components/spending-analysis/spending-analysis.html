@@ -1,0 +1,15 @@
+<div class="spending-card">
+  <div class="header">
+    <h3 class="title">Spending Analysis</h3>
+    <span class="percentage">{{ percentUsedDisplay() }}% used</span>
+  </div>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="percentUsedDisplay()"></div>
+  </div>
+
+  <div class="footer">
+    <p class="budget">Monthly Budget: ${{ monthlyBudget() | number:'1.0-0' }}</p>
+    <p class="spent">${{ spent() | number:'1.0-0' }} spent</p>
+  </div>
+</div>

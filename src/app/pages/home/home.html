@@ -7,7 +7,7 @@
   />
 
   <section class="upcoming-payments-section">
-    <h3 class="section-title">UPCOMING PAYMENT</h3>
+    <h3 class="section-title">Upcoming Payments</h3>
     <div class="payments-scroll">
       @for (payment of upcomingPayments(); track payment.id) {
         <app-upcoming-payment-card
@@ -20,5 +20,12 @@
         />
       }
     </div>
+  </section>
+
+  <section class="spending-section">
+    <app-spending-analysis
+      [monthlyBudget]="monthlyBudget()"
+      [spent]="spent()"
+    />
   </section>
 </div>
