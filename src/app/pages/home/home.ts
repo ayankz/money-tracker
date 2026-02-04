@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { Header } from '../../components/header/header';
-import { BalanceCard } from '../../components/balance-card/balance-card';
-import { UpcomingPaymentCard } from '../../components/upcoming-payment-card/upcoming-payment-card';
-import { SpendingAnalysis } from '../../components/spending-analysis/spending-analysis';
-import type { UpcomingPayment } from '../../models/payment.model';
+import { ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {Header} from '../../components/header/header';
+import {BalanceCard} from '../../components/balance-card/balance-card';
+import {UpcomingPaymentCard} from '../../components/upcoming-payment-card/upcoming-payment-card';
+import {SpendingAnalysis} from '../../components/spending-analysis/spending-analysis';
+import type {UpcomingPayment} from '../../models/payment.model';
 
 @Component({
-  selector: 'app-home',
-  imports: [Header, BalanceCard, UpcomingPaymentCard, SpendingAnalysis],
-  templateUrl: './home.html',
-  styleUrl: './home.scss',
+    selector: 'app-home',
+    imports: [Header, BalanceCard, UpcomingPaymentCard, SpendingAnalysis],
+    templateUrl: './home.html',
+    styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {

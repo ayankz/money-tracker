@@ -1,0 +1,153 @@
+:host {
+  --action-import-bg: #ffedd5;
+  --action-import-color: var(--primary-color);
+  --action-category-bg: #dcfce7;
+  --action-category-color: #8ba888;
+  --action-card-bg: #e0f2fe;
+  --action-card-color: #60a5fa;
+  --action-transaction-bg: #ede9fe;
+  --action-transaction-color: #9586a8;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(92, 86, 81, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.actions {
+  padding: 0 32px 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-end;
+  animation: slideUp 0.3s ease-out;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  animation: slideIn 0.3s ease-out backwards;
+  transition: opacity 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+    border-radius: 9999px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+}
+
+.action-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+}
+
+.action-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+
+  .action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &[data-type='import'] {
+    background-color: var(--action-import-bg);
+    color: var(--action-import-color);
+    box-shadow: 0 10px 15px -3px rgba(217, 142, 115, 0.2);
+  }
+
+  &[data-type='category'] {
+    background-color: var(--action-category-bg);
+    color: var(--action-category-color);
+    box-shadow: 0 10px 15px -3px rgba(139, 168, 136, 0.2);
+  }
+
+  &[data-type='card'] {
+    background-color: var(--action-card-bg);
+    color: var(--action-card-color);
+    box-shadow: 0 10px 15px -3px rgba(96, 165, 250, 0.2);
+  }
+
+  &[data-type='transaction'] {
+    background-color: var(--action-transaction-bg);
+    color: var(--action-transaction-color);
+    box-shadow: 0 10px 15px -3px rgba(149, 134, 168, 0.2);
+  }
+}
+
+.action-item:active .action-button {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,24 @@
+<div
+  class="overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Quick actions menu"
+  (click)="onBackdropClick()"
+>
+  <div class="actions" role="menu" (click)="$event.stopPropagation()">
+    @for (action of actions(); track trackByType($index, action)) {
+      <button
+        class="action-item"
+        role="menuitem"
+        [attr.aria-label]="action.ariaLabel"
+        [attr.data-action]="action.type"
+        (click)="onActionClick(action.type)"
+      >
+        <span class="action-label">{{ action.label }}</span>
+        <div class="action-button" [attr.data-type]="action.type">
+          <span class="action-icon" [innerHTML]="action.iconSvg"></span>
+        </div>
+      </button>
+    }
+  </div>
+</div>
