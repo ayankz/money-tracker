@@ -1,5 +1,5 @@
 @if (isMenuOpen()) {
-  <app-action-menu (close)="closeMenu()" />
+  <app-action-menu (close)="closeMenu()" (actionSelected)="onActionSelected($event)" />
 }
 
 <nav>

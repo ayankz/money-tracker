@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AddButton } from '../add-button/add-button';
-import { ActionMenu } from '../action-menu/action-menu';
+import { ActionMenu, type ActionType } from '../action-menu/action-menu';
 
 @Component({
   selector: 'app-navbar',
@@ -11,6 +11,8 @@ import { ActionMenu } from '../action-menu/action-menu';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Navbar {
+  private readonly router = inject(Router);
+
   protected readonly isMenuOpen = signal(false);
 
   protected toggleMenu(): void {
@@ -19,5 +21,25 @@ export class Navbar {
 
   protected closeMenu(): void {
     this.isMenuOpen.set(false);
+  }
+
+  protected onActionSelected(action: ActionType): void {
+    this.closeMenu();
+
+    switch (action) {
+      case 'card':
+        this.router.navigate(['/add-card']);
+        break;
+      case 'category':
+        this.router.navigate(['/add-category']);
+        break;
+      case 'transaction':
+        this.router.navigate(['/add-transaction']);
+        break;
+      case 'import':
+        // TODO: Implement import functionality
+        console.log('Import statement action');
+        break;
+    }
   }
 }

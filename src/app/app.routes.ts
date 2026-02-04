@@ -25,5 +25,17 @@ export const routes: Routes = [
   {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
+  },
+  {
+    path: 'add-card',
+    loadComponent: () => import('./pages/add-card/add-card').then(m => m.AddCard)
+  },
+  {
+    path: 'add-category',
+    loadComponent: () => import('./pages/add-category/add-category').then(m => m.AddCategory)
+  },
+  {
+    path: 'add-transaction',
+    loadComponent: () => import('./pages/add-transaction/add-transaction').then(m => m.AddTransaction)
   }
 ];
