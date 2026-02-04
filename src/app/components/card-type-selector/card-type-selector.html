@@ -1,0 +1,17 @@
+<div class="card-type-selector">
+  <label class="label">Тип счета</label>
+  <div class="types">
+    @for (type of types; track type.type) {
+      <button
+        type="button"
+        class="type-button"
+        [ngClass]="{ selected: selectedType() === type.type }"
+        [attr.aria-label]="'Select ' + type.label"
+        (click)="onTypeSelect(type.type)"
+      >
+        <span class="icon">{{ type.icon }}</span>
+        <span class="label-text">{{ type.label }}</span>
+      </button>
+    }
+  </div>
+</div>

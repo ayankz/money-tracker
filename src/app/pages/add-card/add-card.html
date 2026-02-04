@@ -1,1 +1,89 @@
 <app-header title="Добавить карту" [showBackButton]="true" />
+
+<div class="add-card-page">
+  <form [formGroup]="cardForm" class="form" (ngSubmit)="onSubmit()">
+    <div class="form-content">
+      <div class="form-group">
+        <label class="label" for="cardName">
+          Название карты
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="cardName"
+          class="input"
+          [class.error]="hasError('cardName')"
+          placeholder="например, Рабочая карта или Основная Виза"
+          formControlName="cardName"
+          [attr.aria-invalid]="hasError('cardName')"
+          [attr.aria-describedby]="hasError('cardName') ? 'cardName-error' : null"
+        />
+        @if (hasError('cardName')) {
+          <span id="cardName-error" class="error-message" role="alert">
+            {{ getErrorMessage('cardName') }}
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="lastDigits">
+          Последние 4 цифры
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="lastDigits"
+          class="input"
+          [class.error]="hasError('lastDigits')"
+          placeholder="0000"
+          formControlName="lastDigits"
+          (input)="onLastDigitsInput($event)"
+          maxlength="4"
+          inputmode="numeric"
+          [attr.aria-invalid]="hasError('lastDigits')"
+          [attr.aria-describedby]="hasError('lastDigits') ? 'lastDigits-error' : null"
+        />
+        @if (hasError('lastDigits')) {
+          <span id="lastDigits-error" class="error-message" role="alert">
+            {{ getErrorMessage('lastDigits') }}
+          </span>
+        }
+      </div>
+
+      <app-color-picker
+        [selectedColor]="selectedColor()"
+        (colorSelected)="onColorSelected($event)"
+      />
+
+      <app-card-type-selector
+        [selectedType]="selectedType()"
+        (typeSelected)="onTypeSelected($event)"
+      />
+    </div>
+
+    <div class="actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!isFormValid()"
+        [attr.aria-busy]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Добавление...</span>
+        } @else {
+          <span class="icon" aria-hidden="true">💳</span>
+          <span>Добавить карту</span>
+        }
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()"
+      >
+        Отмена
+      </button>
+    </div>
+  </form>
+</div>

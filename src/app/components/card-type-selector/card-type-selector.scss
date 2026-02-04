@@ -1,0 +1,73 @@
+.card-type-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 0 4px;
+}
+
+.types {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.type-button {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--white);
+  border: 2px solid rgba(92, 86, 81, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+  }
+
+  &.selected {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+
+    .icon {
+      transform: scale(1.1);
+    }
+
+    .label-text {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.icon {
+  font-size: 24px;
+  transition: transform 0.2s ease;
+}
+
+.label-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}

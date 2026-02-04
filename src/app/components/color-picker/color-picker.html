@@ -1,0 +1,15 @@
+<div class="color-picker">
+  <label class="label">Цвет карты</label>
+  <div class="colors">
+    @for (color of colors; track color.value) {
+      <button
+        type="button"
+        class="color-button"
+        [ngClass]="{ selected: selectedColor() === color.value }"
+        [style.background-color]="color.value"
+        [attr.aria-label]="'Select ' + color.name + ' color'"
+        (click)="onColorSelect(color.value)"
+      ></button>
+    }
+  </div>
+</div>
