@@ -9,6 +9,7 @@ import { NgClass } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColorPicker {
+  readonly label = input<string>('Цвет карты');
   readonly selectedColor = input<string>('#ffdce3');
   readonly colorSelected = output<string>();
 

@@ -1,0 +1,60 @@
+// All design tokens are defined in src/styles.scss
+
+.icon-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 var(--spacing-xs);
+}
+
+.icons-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--spacing-md);
+  background: var(--background-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  max-height: 192px;
+  overflow-y: auto;
+}
+
+.icon-button {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: var(--spacing-sm);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    background: var(--primary-purple-light);
+  }
+
+  &.selected {
+    background: var(--white);
+    color: var(--primary-purple);
+    border: 1px solid var(--border-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+  }
+}

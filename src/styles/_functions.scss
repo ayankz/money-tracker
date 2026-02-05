@@ -1,0 +1,46 @@
+// SCSS functions for calculations and utilities
+
+// Convert px to rem
+@function rem($px, $base: 16px) {
+  @return calc($px / $base) * 1rem;
+}
+
+// Convert px to em
+@function em($px, $base: 16px) {
+  @return calc($px / $base) * 1em;
+}
+
+// Alpha/Opacity
+@function alpha($color, $opacity) {
+  @return rgba($color, $opacity);
+}
+
+// Lighten/Darken shortcuts
+@function tint($color, $percentage) {
+  @return mix(white, $color, $percentage);
+}
+
+@function shade($color, $percentage) {
+  @return mix(black, $color, $percentage);
+}
+
+// Map deep get
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+  @return $map;
+}
+
+// Strip units
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return calc($number / ($number * 0 + 1));
+  }
+  @return $number;
+}
+
+// Clamp function polyfill
+@function clamp-value($min, $val, $max) {
+  @return max($min, min($val, $max));
+}

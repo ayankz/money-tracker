@@ -1,1 +1,141 @@
 <app-header title="Добавить категорию" [showBackButton]="true" />
+
+<app-search-field
+  placeholder="Search categories..."
+  [value]="searchQuery()"
+  (valueChange)="onSearchChange($event)"
+  name="category-search"
+/>
+
+<div class="categories-section">
+  <div class="section-header">
+    <h3 class="section-title">Your Categories</h3>
+    <button
+      class="view-all-link"
+      type="button"
+      (click)="onViewAll()"
+      aria-label="View all categories"
+    >
+      View All
+    </button>
+  </div>
+
+  @if (hasResults()) {
+    <div class="categories-grid" role="grid" aria-label="Categories">
+      @for (category of filteredCategories(); track category.id) {
+        <button
+          class="category-item"
+          type="button"
+          role="gridcell"
+          [attr.aria-label]="'Select ' + category.name + ' category'"
+          (click)="onCategorySelect(category)"
+          (keydown.enter)="onCategorySelect(category)"
+          (keydown.space)="onCategorySelect(category)"
+        >
+          <div class="category-icon-wrapper">
+            <div
+              class="category-icon-circle"
+              [style.background-color]="category.backgroundColor"
+              [attr.aria-hidden]="true"
+            >
+              <svg
+                class="category-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                [attr.fill]="category.iconColor"
+              >
+                <path [attr.d]="category.iconPath" />
+              </svg>
+            </div>
+          </div>
+          <div class="category-name">
+            <p>{{ category.name }}</p>
+          </div>
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="empty-state" role="status" aria-live="polite">
+      <svg
+        class="empty-state-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+        />
+      </svg>
+      <p class="empty-state-text">No categories found</p>
+      <p class="empty-state-subtext">Try a different search term</p>
+    </div>
+  }
+</div>
+
+<div class="bottom-section">
+  <h3 class="form-title">Create Custom Category</h3>
+
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
+    <!-- Name Input -->
+    <div class="form-group">
+      <label for="category-name" class="form-label">Category Name</label>
+      <input
+        id="category-name"
+        type="text"
+        class="form-input"
+        placeholder="e.g. Subscriptions"
+        formControlName="name"
+        [attr.aria-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched"
+      />
+      @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+        <p class="form-error" role="alert">
+          @if (categoryForm.get('name')?.hasError('required')) {
+            Category name is required
+          }
+          @if (categoryForm.get('name')?.hasError('minlength')) {
+            Name must be at least 2 characters
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Color Picker -->
+    <app-color-picker
+      label="Choose Color"
+      [selectedColor]="selectedColor()"
+      (colorSelected)="onColorSelect($event)"
+    />
+
+    <!-- Icon Picker -->
+    <app-icon-picker
+      [selectedIcon]="selectedIcon()"
+      (iconSelected)="onIconSelect($event)"
+    />
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="!isFormValid() || isSubmitting()"
+        [attr.aria-busy]="isSubmitting()"
+      >
+        <svg
+          class="button-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+          />
+        </svg>
+        {{ isSubmitting() ? 'Creating...' : 'Create Category' }}
+      </button>
+
+      <button type="button" class="cancel-button" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

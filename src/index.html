@@ -4,10 +4,39 @@
   <meta charset="utf-8">
   <title>SaveToDream</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Standard favicon -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Theme colors -->
+  <meta name="theme-color" content="#d98e73">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#d98e73">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d98e73">
+
+  <!-- iOS specific meta tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SaveToDream">
+
+  <!-- iOS app icons -->
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-152x152.png">
+
+  <!-- iOS splash screen (for better UX) -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- App description -->
+  <meta name="description" content="Personal finance tracker to help you save for your dreams">
+  <meta name="keywords" content="finance, budget, savings, money, tracker">
 </head>
 <body>
   <app-root></app-root>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
 </html>

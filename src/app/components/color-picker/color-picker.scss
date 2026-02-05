@@ -1,21 +1,23 @@
+// All design tokens are defined in src/styles.scss
+
 .color-picker {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary-color);
-  padding: 0 4px;
+  color: var(--text-secondary);
+  padding: 0 var(--spacing-xs);
 }
 
 .colors {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 4px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xs);
 }
 
 .color-button {
@@ -23,9 +25,9 @@
   height: 40px;
   border-radius: 50%;
   border: 2px solid var(--white);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   position: relative;
 
   &:hover {
@@ -33,11 +35,16 @@
   }
 
   &.selected {
-    box-shadow: 0 0 0 3px var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-purple);
     transform: scale(1.05);
   }
 
   &:active {
     transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
   }
 }

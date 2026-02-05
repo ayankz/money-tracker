@@ -1,0 +1,70 @@
+// All design tokens are defined in src/styles.scss
+
+.search-container {
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.search-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  height: 48px;
+  width: 100%;
+}
+
+.search-input-container {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  align-items: stretch;
+  border-radius: var(--radius-full);
+  height: 100%;
+  background: var(--pastel-purple);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+
+  &:focus-within {
+    border-color: var(--primary-purple-focus);
+    box-shadow: 0 0 0 3px var(--primary-purple-light);
+  }
+}
+
+.search-icon {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--spacing-lg);
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.search-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  resize: none;
+  overflow: hidden;
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  padding: 0 var(--spacing-lg) 0 var(--spacing-sm);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+
+  &:focus {
+    outline: none;
+    ring: none;
+  }
+
+  &::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+}

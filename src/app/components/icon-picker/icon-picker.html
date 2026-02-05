@@ -1,0 +1,18 @@
+<div class="icon-picker">
+  <label class="label">Select Icon</label>
+  <div class="icons-grid">
+    @for (icon of icons; track icon.id) {
+      <button
+        type="button"
+        class="icon-button"
+        [ngClass]="{ selected: selectedIcon() === icon.id }"
+        [attr.aria-label]="'Select ' + icon.label + ' icon'"
+        (click)="onIconSelect(icon.id)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path [attr.d]="icon.path" />
+        </svg>
+      </button>
+    }
+  </div>
+</div>

@@ -1,0 +1,85 @@
+// CSS Custom Properties (for runtime theming and dark mode)
+@use 'variables' as *;
+
+:root {
+  // Brand colors
+  --primary-color: #{$primary-color};
+  --primary-light: #{$primary-light};
+  --primary-purple: #{$primary-purple};
+  --primary-purple-light: #{$primary-purple-light};
+  --primary-purple-focus: #{$primary-purple-focus};
+
+  // Background colors
+  --background: #{$background};
+  --background-blur: #{$background-blur};
+  --background-light: #{$background-light};
+  --background-dark: #{$background-dark};
+
+  // Text colors
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-tertiary: #{$text-tertiary};
+  --text-quaternary: #{$text-quaternary};
+  --text-light: #{$text-light};
+  --white: #{$white};
+
+  // Pastel colors
+  --pastel-pink: #{$pastel-pink};
+  --pastel-blue: #{$pastel-blue};
+  --pastel-green: #{$pastel-green};
+  --pastel-orange: #{$pastel-orange};
+  --pastel-yellow: #{$pastel-yellow};
+  --pastel-purple: #{$pastel-purple};
+  --pastel-teal: #{$pastel-teal};
+  --pastel-peach: #{$pastel-peach};
+
+  // Border colors
+  --border-light: #{$border-light};
+  --border-primary: #{$border-primary};
+
+  // Status colors
+  --success: #{$success};
+  --error: #{$error};
+  --warning: #{$warning};
+  --info: #{$info};
+
+  // Spacing system
+  --spacing-xs: #{$spacing-xs};
+  --spacing-sm: #{$spacing-sm};
+  --spacing-md: #{$spacing-md};
+  --spacing-lg: #{$spacing-lg};
+  --spacing-xl: #{$spacing-xl};
+  --spacing-2xl: #{$spacing-2xl};
+  --spacing-3xl: #{$spacing-3xl};
+
+  // Border radius
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-full: #{$radius-full};
+
+  // Transitions
+  --transition-fast: #{$transition-fast};
+  --transition-normal: #{$transition-normal};
+  --transition-slow: #{$transition-slow};
+
+  // Shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --shadow-primary: #{$shadow-primary};
+}
+
+// Dark mode overrides
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #{$text-primary};
+    --background-light: rgba(255, 255, 255, 0.05);
+    --text-primary: #{$white};
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.8);
+    --border-light: rgba(255, 255, 255, 0.1);
+  }
+}
