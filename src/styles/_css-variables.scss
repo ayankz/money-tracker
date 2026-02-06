@@ -1,4 +1,4 @@
-// CSS Custom Properties (for runtime theming and dark mode)
+// CSS Custom Properties (for theming)
 @use 'variables' as *;
 
 :root {
@@ -70,16 +70,4 @@
   --shadow-lg: #{$shadow-lg};
   --shadow-xl: #{$shadow-xl};
   --shadow-primary: #{$shadow-primary};
-}
-
-// Dark mode overrides
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #{$text-primary};
-    --background-light: rgba(255, 255, 255, 0.05);
-    --text-primary: #{$white};
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --text-tertiary: rgba(255, 255, 255, 0.8);
-    --border-light: rgba(255, 255, 255, 0.1);
-  }
 }

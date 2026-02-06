@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook - более строгие проверки
+echo "🚀 Running pre-push checks..."
+
+# 1. Run all tests
+echo "🧪 Running tests..."
+npm run test:ci
+
+# 2. Build check
+echo "🏗️ Building project..."
+npm run build
+
+echo "✅ Pre-push checks passed! Safe to push."
