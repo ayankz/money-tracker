@@ -1,0 +1,77 @@
+<div class="auth">
+  <header class="auth__header">
+    <div class="auth__logo">
+      <img class="auth__logo-icon" src="/icons/logo.svg" alt="TabysPro logo">
+      <span class="auth__logo-name">TabysPro</span>
+    </div>
+  </header>
+
+  <main class="auth__main">
+    <div class="auth__container">
+      <div class="auth__title-block">
+        <h1 class="auth__title">Join Us.</h1>
+        <p class="auth__subtitle">Start your financial journey in<br>our digital sanctuary.</p>
+      </div>
+
+      <div class="auth__card">
+        <form class="auth__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="auth__fields">
+            <div class="auth__field">
+              <label class="auth__label">Имя</label>
+              <input class="auth__input" type="text" placeholder="Ваше имя" formControlName="name" [disabled]="isLoading()">
+              @if (nameError()) {
+                <span class="auth__error">{{ nameError() }}</span>
+              }
+            </div>
+
+            <div class="auth__field">
+              <label class="auth__label">Email Address</label>
+              <input class="auth__input" type="email" placeholder="name@example.com" formControlName="email" [disabled]="isLoading()">
+              @if (emailError()) {
+                <span class="auth__error">{{ emailError() }}</span>
+              }
+            </div>
+
+            <div class="auth__field">
+              <label class="auth__label">Password</label>
+              <div class="auth__input-wrap">
+                <input class="auth__input" [type]="showPassword() ? 'text' : 'password'" placeholder="••••••••" formControlName="password" [disabled]="isLoading()">
+                <button class="auth__eye" type="button" (click)="showPassword.set(!showPassword())" [disabled]="isLoading()" [attr.aria-label]="showPassword() ? 'Скрыть пароль' : 'Показать пароль'">
+                  @if (showPassword()) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  }
+                </button>
+              </div>
+              @if (passwordError()) {
+                <span class="auth__error">{{ passwordError() }}</span>
+              }
+            </div>
+          </div>
+
+          @if (serverError()) {
+            <span class="auth__error">{{ serverError() }}</span>
+          }
+
+          <button class="auth__submit" type="submit" [disabled]="!isValid() || isLoading()">
+            {{ isLoading() ? 'Загрузка...' : 'Sign Up' }}
+          </button>
+        </form>
+
+        <div class="auth__switch">
+          <span class="auth__switch-text">Already have an account?</span>
+          <a class="auth__switch-link" [routerLink]="'/auth'">Sign in</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
+import { guestOnlyGuard } from './guards/guest-only.guard';
 
 export const routes: Routes = [
   {
@@ -9,6 +11,7 @@ export const routes: Routes = [
   // Routes with MainLayout (with navbar)
   {
     path: '',
+    canActivate: [authGuard],
     loadComponent: () => import('./layouts/main-layout/main-layout').then(m => m.MainLayout),
     children: [
       {
@@ -33,9 +36,10 @@ export const routes: Routes = [
       }
     ]
   },
-  // Routes with FullscreenLayout (without navbar)
+  // Routes with FullscreenLayout (without navbar) - protected
   {
     path: '',
+    canActivate: [authGuard],
     loadComponent: () => import('./layouts/fullscreen-layout/fullscreen-layout').then(m => m.FullscreenLayout),
     children: [
       {
@@ -51,5 +55,16 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/add-transaction/add-transaction').then(m => m.AddTransaction)
       }
     ]
+  },
+  // Public routes (no auth required)
+  {
+    path: 'auth',
+    canActivate: [guestOnlyGuard],
+    loadComponent: () => import('./pages/auth/auth').then(m => m.Auth)
+  },
+  {
+    path: 'signup',
+    canActivate: [guestOnlyGuard],
+    loadComponent: () => import('./pages/signup/signup').then(m => m.Signup)
   }
 ];
