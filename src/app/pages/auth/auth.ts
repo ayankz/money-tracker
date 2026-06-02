@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 interface OAuthMessageData {
   type?: string;
@@ -31,8 +32,8 @@ interface OAuthMessageData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Auth {
-  private readonly GOOGLE_OAUTH_URL = '/api/auth/google';
-  private readonly BACKEND_ORIGIN = 'https://wallet-app-nest.onrender.com';
+  private readonly BACKEND_ORIGIN = environment.backendOrigin;
+  private readonly GOOGLE_OAUTH_URL = `${this.BACKEND_ORIGIN}/api/auth/google`;
   private readonly GOOGLE_POPUP_WIDTH = 520;
   private readonly GOOGLE_POPUP_HEIGHT = 700;
   private readonly OAUTH_TIMEOUT_MS = 120000;
