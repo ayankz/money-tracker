@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
 import { BaseHttp } from './base-http/base-http';
 
 const TOKEN_KEY = 'access_token';
@@ -45,13 +45,31 @@ export class AuthService {
   }
 
   refresh(): Observable<Tokens> {
-    return this.http.post<Tokens>('/api/auth/refresh', {}).pipe(
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<Tokens>(
+      '/api/auth/refresh',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    ).pipe(
       tap((tokens) => this.setTokens(tokens))
     );
   }
 
   saveTokens(tokens: Tokens): void {
     this.setTokens(tokens);
+  }
+
+  clearSession(): void {
+    this.clearTokens();
   }
 
   private setTokens({ access_token, refresh_token }: Tokens): void {

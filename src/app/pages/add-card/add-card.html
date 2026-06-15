@@ -44,7 +44,7 @@
           inputmode="numeric"
           [disabled]="isSubmitting()"
           [attr.aria-invalid]="hasError('lastDigits')"
-          [attr.aria-describedby]="hasError('lastDigits') ? 'lastDigits-error' : null"
+          [attr.aria-describedby]="hasError('lastDigits') ? 'lastDigits-error' : null" 
         />
         @if (hasError('lastDigits')) {
           <span id="lastDigits-error" class="error-message" role="alert">

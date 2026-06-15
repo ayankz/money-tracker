@@ -64,6 +64,15 @@ export class AddCard {
       });
 
     effect(() => {
+      if (this.isSubmitting()) {
+        this.cardForm.disable({ emitEvent: false });
+        return;
+      }
+
+      this.cardForm.enable({ emitEvent: false });
+    });
+
+    effect(() => {
       if (!this.isSubmitting()) {
         return;
       }
