@@ -33,6 +33,10 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
+      },
+      {
+        path: 'my-money',
+        loadComponent: () => import('./pages/my-money/my-money').then(m => m.MyMoney)
       }
     ]
   },
@@ -41,17 +45,43 @@ export const routes: Routes = [
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./layouts/fullscreen-layout/fullscreen-layout').then(m => m.FullscreenLayout),
+    children: []
+  },
+  {
+    path: 'add-card',
+    outlet: 'sheet',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/bottom-sheet-layout/bottom-sheet-layout').then(m => m.BottomSheetLayout),
     children: [
       {
-        path: 'add-card',
+        path: '',
         loadComponent: () => import('./pages/add-card/add-card').then(m => m.AddCard)
-      },
+      }
+    ]
+  },
+  {
+    path: 'add-category',
+    outlet: 'sheet',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/bottom-sheet-layout/bottom-sheet-layout').then(m => m.BottomSheetLayout),
+    children: [
       {
-        path: 'add-category',
+        path: '',
         loadComponent: () => import('./pages/add-category/add-category').then(m => m.AddCategory)
-      },
+      }
+    ]
+  },
+  {
+    path: 'add-transaction',
+    outlet: 'sheet',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/bottom-sheet-layout/bottom-sheet-layout').then(m => m.BottomSheetLayout),
+    children: [
       {
-        path: 'add-transaction',
+        path: '',
         loadComponent: () => import('./pages/add-transaction/add-transaction').then(m => m.AddTransaction)
       }
     ]

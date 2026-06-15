@@ -41,6 +41,37 @@ $error: #f44336;
 $warning: #ff9800;
 $info: #2196f3;
 
+// Profile page colors
+$profile-header-gradient-start: rgba(251, 245, 242, 0.98);
+$profile-header-gradient-end: rgba(251, 245, 242, 0.92);
+$profile-surface-glass: rgba(255, 255, 255, 0.75);
+$profile-surface-muted: rgba(255, 255, 255, 0.72);
+$profile-surface-soft: rgba(255, 255, 255, 0.62);
+$profile-surface-card: rgba(255, 255, 255, 0.45);
+$profile-surface-overlay: rgba(255, 255, 255, 0.16);
+$profile-surface-overlay-soft: rgba(255, 255, 255, 0.14);
+$profile-avatar-gradient-start: #f7d6cb;
+$profile-avatar-gradient-end: #e8b39d;
+$profile-avatar-text: #6f2f1d;
+$profile-avatar-shadow: rgba(112, 72, 51, 0.15);
+$profile-card-gradient: linear-gradient(135deg, #6f5f93 0%, #564775 100%);
+$profile-card-shadow: rgba(72, 54, 110, 0.24);
+$profile-primary-border-strong: rgba(217, 142, 115, 0.22);
+$profile-primary-surface: rgba(217, 142, 115, 0.08);
+$profile-primary-surface-hover: rgba(217, 142, 115, 0.14);
+$profile-primary-divider: rgba(217, 142, 115, 0.12);
+$profile-primary-surface-subtle: rgba(217, 142, 115, 0.05);
+$profile-settings-purple-bg: #e6dcff;
+$profile-settings-purple-text: #4b3b6f;
+$profile-settings-peach-bg: #ffdace;
+$profile-settings-peach-text: #7b3b22;
+$profile-settings-green-bg: #dff6e9;
+$profile-settings-green-text: #166041;
+$profile-settings-lavender-bg: #ece4ff;
+$profile-settings-lavender-text: #66548d;
+$profile-error-border: rgba(231, 76, 60, 0.18);
+$profile-error-surface: rgba(231, 76, 60, 0.08);
+
 // Spacing system
 $spacing-xs: 4px;
 $spacing-sm: 8px;

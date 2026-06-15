@@ -82,9 +82,7 @@ export class AddCategory {
 
   protected onCategorySelect(category: Category): void {
     this.categorySelected.emit(category);
-    this.router.navigate(['/home']).catch((error) => {
-      console.error('Navigation failed:', error);
-    });
+    this.closeSheet();
   }
 
   protected onViewAll(): void {
@@ -122,15 +120,16 @@ export class AddCategory {
     this.categoryCreated.emit(newCategory);
     this.categoryForm.reset();
     this.isSubmitting.set(false);
-
-    this.router.navigate(['/home']).catch((error) => {
-      console.error('Navigation failed:', error);
-    });
+    this.closeSheet();
   }
 
   protected onCancel(): void {
     this.categoryForm.reset();
-    this.router.navigate(['/home']).catch((error) => {
+    this.closeSheet();
+  }
+
+  private closeSheet(): void {
+    this.router.navigate([{ outlets: { sheet: null } }]).catch((error) => {
       console.error('Navigation failed:', error);
     });
   }

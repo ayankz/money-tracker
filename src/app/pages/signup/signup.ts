@@ -4,10 +4,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { merge } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { Header } from '../../components/header/header';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Header],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

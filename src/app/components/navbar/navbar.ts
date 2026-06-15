@@ -28,13 +28,13 @@ export class Navbar {
 
     switch (action) {
       case 'card':
-        this.router.navigate(['/add-card']);
+        this.router.navigate([{ outlets: { sheet: ['add-card'] } }]);
         break;
       case 'category':
-        this.router.navigate(['/add-category']);
+        this.router.navigate([{ outlets: { sheet: ['add-category'] } }]);
         break;
       case 'transaction':
-        this.router.navigate(['/add-transaction']);
+        this.router.navigate([{ outlets: { sheet: ['add-transaction'] } }]);
         break;
       case 'import':
         // TODO: Implement import functionality

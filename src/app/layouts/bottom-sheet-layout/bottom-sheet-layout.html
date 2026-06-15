@@ -1,0 +1,12 @@
+<div
+  class="sheet-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Bottom sheet"
+  (click)="onBackdropClick()"
+>
+  <section class="sheet-panel" (click)="$event.stopPropagation()">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <router-outlet />
+  </section>
+</div>

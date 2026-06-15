@@ -4,31 +4,6 @@
   min-height: 100dvh;
   background: var(--background);
 
-  &__header {
-    padding: 16px 24px;
-    background: rgba(250, 250, 249, 0.8);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid rgba(212, 212, 212, 0.2);
-  }
-
-  &__logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  &__logo-icon {
-    width: 28px;
-    height: 28px;
-  }
-
-  &__logo-name {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.3px;
-  }
-
   &__main {
     flex: 1;
     display: flex;

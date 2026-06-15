@@ -3,9 +3,9 @@ import {
   Component,
   inject,
   input,
+  output,
   signal,
   HostListener,
-  effect,
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Location } from '@angular/common';
@@ -19,11 +19,18 @@ import { filter } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
+  readonly variant = input<'default' | 'logo'>('default');
+  readonly appearance = input<'default' | 'glass'>('default');
   readonly title = input<string>('');
   readonly showBackButton = input<boolean>(false);
   readonly showProfile = input<boolean>(false);
   readonly userName = input<string>('');
   readonly fallbackRoute = input<string>('/home');
+  readonly logoName = input<string>('TabysPro');
+  readonly showActionButton = input<boolean>(false);
+  readonly actionIconSrc = input<string>('');
+  readonly actionAriaLabel = input<string>('Open action');
+  readonly actionClick = output<void>();
 
   protected readonly showProfileMenu = signal<boolean>(false);
   private readonly navigationHistoryExists = signal<boolean>(false);
@@ -53,6 +60,10 @@ export class Header {
 
   protected toggleProfileMenu(): void {
     this.showProfileMenu.update((value) => !value);
+  }
+
+  protected onActionClick(): void {
+    this.actionClick.emit();
   }
 
   @HostListener('document:click', ['$event'])

@@ -1,31 +1,34 @@
 <app-header [showProfile]="true" [userName]="'John'" />
 
 <div class="content">
-  <app-balance-card
-    [balance]="balance()"
-    [monthDifference]="monthDifference()"
+  <app-financial-overview
+    [weeklyEarnings]="weeklyEarnings()"
+    [monthlyEarnings]="monthlyEarnings()"
+    [weeklySpending]="weeklySpending()"
+    [monthlySpending]="monthlySpending()"
   />
 
-  <section class="upcoming-payments-section">
-    <h3 class="section-title">Upcoming Payments</h3>
-    <div class="payments-scroll">
-      @for (payment of upcomingPayments(); track payment.id) {
-        <app-upcoming-payment-card
-          [title]="payment.title"
-          [amount]="payment.amount"
-          [dueDate]="payment.dueDate"
-          [icon]="payment.icon"
-          [isPaid]="payment.isPaid ?? false"
-          (clicked)="onPaymentClick(payment)"
-        />
-      }
-    </div>
-  </section>
+  <app-cards-section
+    [cards]="cards()"
+    [cardsClickable]="true"
+    (action)="openMyMoney()"
+    (addCard)="openAddCard()"
+    (removeCard)="removeCard($event)"
+    (cardClick)="openMyMoney()"
+  />
 
-  <section class="spending-section">
-    <app-spending-analysis
-      [monthlyBudget]="monthlyBudget()"
-      [spent]="spent()"
-    />
-  </section>
+  <app-cash-wallet
+    [balance]="cashWalletBalance()"
+    (topUp)="topUpCashWallet()"
+  />
+
+  <app-upcoming-payments-section
+    [payments]="upcomingPayments()"
+    (paymentClick)="onPaymentClick($event)"
+  />
+
+  <app-spending-analysis
+    [monthlyBudget]="monthlyBudget()"
+    [spent]="spent()"
+  />
 </div>

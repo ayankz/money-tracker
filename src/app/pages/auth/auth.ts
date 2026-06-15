@@ -11,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
+import { Header } from '../../components/header/header';
 
 interface OAuthMessageData {
   type?: string;
@@ -26,7 +27,7 @@ interface OAuthMessageData {
 
 @Component({
   selector: 'app-auth',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Header],
   templateUrl: './auth.html',
   styleUrl: './auth.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

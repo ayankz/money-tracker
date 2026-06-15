@@ -1,0 +1,25 @@
+<section class="cards-section">
+  <div class="section-heading">
+    <h3 class="section-title">{{ title() }}</h3>
+    <button class="secondary-button" type="button" (click)="onAction()">{{ actionLabel() }}</button>
+  </div>
+
+  <div class="cards-list" [class.cards-list--stack]="layout() === 'stack'">
+    @for (card of cards(); track card.id) {
+      <app-money-card
+        [card]="card"
+        [clickable]="cardsClickable()"
+        [showDelete]="showDelete()"
+        (open)="onCardClick(card.id)"
+        (remove)="onRemoveCard($event)"
+      />
+    }
+
+    @if (showAddCardTile()) {
+      <button class="add-card" type="button" (click)="onAddCard()">
+        <span class="add-card__plus">+</span>
+        <span>Add Card</span>
+      </button>
+    }
+  </div>
+</section>

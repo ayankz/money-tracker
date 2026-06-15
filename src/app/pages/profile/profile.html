@@ -1,5 +1,22 @@
-<app-header title="Profile" [showBackButton]="true" [fallbackRoute]="'/home'" />
+<section class="profile-page">
+  <app-header
+    title="Profile"
+    [showBackButton]="true"
+    [showActionButton]="true"
+    [actionIconSrc]="'/icons/profile-settings.svg'"
+    [actionAriaLabel]="'Profile settings'"
+    (actionClick)="openSettings()"
+  />
 
-<div class="content">
-  <p>Profile page</p>
-</div>
+  <section class="profile-hero">
+    <div class="avatar-wrap">
+      <div class="avatar" aria-hidden="true">
+        <span>JD</span>
+      </div>
+    </div>
+
+    <h2>{{ profileName() }}</h2>
+    <p>{{ profileEmail() }}</p>
+  </section>
+
+</section>

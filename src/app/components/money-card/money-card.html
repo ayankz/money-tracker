@@ -1,0 +1,33 @@
+<article
+  class="bank-card"
+  [class.bank-card--clickable]="clickable()"
+  [ngStyle]="{ background: card().color }"
+  [attr.role]="clickable() ? 'button' : null"
+  [attr.tabindex]="clickable() ? '0' : null"
+  [attr.aria-label]="clickable() ? 'Open My Money' : null"
+  (click)="clickable() && onOpen()"
+  (keydown.enter)="clickable() && onOpen()"
+  (keydown.space)="clickable() && onOpen(); clickable() && $event.preventDefault()"
+>
+  @if (showDelete()) {
+    <button
+      class="bank-card__delete"
+      type="button"
+      aria-label="Remove card"
+      (click)="onRemove(); $event.stopPropagation()"
+    >
+      <img class="icon-image icon-image--sm" src="/icons/profile-delete.svg" alt="" aria-hidden="true">
+    </button>
+  }
+
+  <p class="bank-card__title">{{ card().name }}</p>
+
+  <div class="bank-card__middle">
+    <small class="bank-card__balance-label">Balance</small>
+    <p class="bank-card__balance-amount">${{ card().balance | number:'1.2-2' }}</p>
+  </div>
+
+  <div class="bank-card__bottom">
+    <p class="bank-card__number">•••• •••• •••• {{ card().digits }}</p>
+  </div>
+</article>

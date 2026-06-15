@@ -43,6 +43,36 @@
   --warning: #{$warning};
   --info: #{$info};
 
+  // Profile page colors
+  --profile-header-gradient-start: #{$profile-header-gradient-start};
+  --profile-header-gradient-end: #{$profile-header-gradient-end};
+  --profile-surface-glass: #{$profile-surface-glass};
+  --profile-surface-muted: #{$profile-surface-muted};
+  --profile-surface-soft: #{$profile-surface-soft};
+  --profile-surface-card: #{$profile-surface-card};
+  --profile-surface-overlay: #{$profile-surface-overlay};
+  --profile-surface-overlay-soft: #{$profile-surface-overlay-soft};
+  --profile-avatar-gradient-start: #{$profile-avatar-gradient-start};
+  --profile-avatar-gradient-end: #{$profile-avatar-gradient-end};
+  --profile-avatar-text: #{$profile-avatar-text};
+  --profile-avatar-shadow: #{$profile-avatar-shadow};
+  --profile-card-gradient: #{$profile-card-gradient};
+  --profile-primary-border-strong: #{$profile-primary-border-strong};
+  --profile-primary-surface: #{$profile-primary-surface};
+  --profile-primary-surface-hover: #{$profile-primary-surface-hover};
+  --profile-primary-divider: #{$profile-primary-divider};
+  --profile-primary-surface-subtle: #{$profile-primary-surface-subtle};
+  --profile-settings-purple-bg: #{$profile-settings-purple-bg};
+  --profile-settings-purple-text: #{$profile-settings-purple-text};
+  --profile-settings-peach-bg: #{$profile-settings-peach-bg};
+  --profile-settings-peach-text: #{$profile-settings-peach-text};
+  --profile-settings-green-bg: #{$profile-settings-green-bg};
+  --profile-settings-green-text: #{$profile-settings-green-text};
+  --profile-settings-lavender-bg: #{$profile-settings-lavender-bg};
+  --profile-settings-lavender-text: #{$profile-settings-lavender-text};
+  --profile-error-border: #{$profile-error-border};
+  --profile-error-surface: #{$profile-error-surface};
+
   // Spacing system
   --spacing-xs: #{$spacing-xs};
   --spacing-sm: #{$spacing-sm};

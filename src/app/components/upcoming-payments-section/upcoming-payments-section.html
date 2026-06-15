@@ -1,0 +1,15 @@
+<section class="upcoming-payments-section">
+  <h3 class="section-title">Upcoming Payments</h3>
+  <div class="payments-scroll">
+    @for (payment of payments(); track payment.id) {
+      <app-upcoming-payment-card
+        [title]="payment.title"
+        [amount]="payment.amount"
+        [dueDate]="payment.dueDate"
+        [icon]="payment.icon"
+        [isPaid]="payment.isPaid ?? false"
+        (clicked)="onPaymentClick(payment)"
+      />
+    }
+  </div>
+</section>

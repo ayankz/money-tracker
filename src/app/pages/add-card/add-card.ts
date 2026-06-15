@@ -1,22 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { startWith, map } from 'rxjs/operators';
 import { Header } from '../../components/header/header';
-import { ColorPicker } from '../../components/color-picker/color-picker';
-import { CardTypeSelector, type CardType } from '../../components/card-type-selector/card-type-selector';
+import type { CreateCardDto } from '../../models/card.model';
+import { CardsService } from '../../services/cards/cards';
 
 interface CardFormValue {
-  cardName: string;
+  // cardName: string;
   lastDigits: string;
-  color: string;
-  type: CardType;
+  balance: number;
 }
 
 @Component({
   selector: 'app-add-card',
-  imports: [Header, ReactiveFormsModule, ColorPicker, CardTypeSelector],
+  imports: [Header, ReactiveFormsModule],
   templateUrl: './add-card.html',
   styleUrl: './add-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,49 +22,63 @@ interface CardFormValue {
 export class AddCard {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly cardsService = inject(CardsService);
 
   protected readonly isSubmitting = signal(false);
 
   protected readonly cardForm: FormGroup = this.fb.group({
-    cardName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+    // cardName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     lastDigits: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
-    color: ['#ffdce3', Validators.required],
-    type: ['credit' as CardType, Validators.required],
+    balance: ['', [Validators.required, Validators.pattern(/^\d+([.,]\d{0,2})?$/)]],
   });
 
-  protected readonly isFormValid = computed(() => {
-    return this.cardForm.valid && !this.isSubmitting();
-  });
+  constructor() {
+    const lastDigitsControl = this.cardForm.get('lastDigits');
+    lastDigitsControl?.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => {
+        const normalized = String(value ?? '')
+          .replace(/\D/g, '')
+          .substring(0, 4);
 
-  // Convert form value changes to signals
-  protected readonly selectedColor = toSignal(
-    this.cardForm.get('color')!.valueChanges.pipe(
-      startWith(this.cardForm.get('color')!.value),
-      map(value => value || '#ffdce3')
-    ),
-    { initialValue: '#ffdce3' }
-  );
+        if (normalized !== value) {
+          lastDigitsControl.patchValue(normalized, { emitEvent: false });
+        }
+      });
 
-  protected readonly selectedType = toSignal(
-    this.cardForm.get('type')!.valueChanges.pipe(
-      startWith(this.cardForm.get('type')!.value),
-      map(value => value || 'credit')
-    ),
-    { initialValue: 'credit' as CardType }
-  );
+    const balanceControl = this.cardForm.get('balance');
+    balanceControl?.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((value) => {
+        const sanitized = String(value ?? '')
+          .replace(',', '.')
+          .replace(/[^\d.]/g, '')
+          .replace(/(\..*)\./g, '$1');
 
-  protected onColorSelected(color: string): void {
-    this.cardForm.patchValue({ color });
-  }
+        const [whole = '', fraction = ''] = sanitized.split('.');
+        const normalized = fraction ? `${whole}.${fraction.substring(0, 2)}` : whole;
 
-  protected onTypeSelected(type: CardType): void {
-    this.cardForm.patchValue({ type });
-  }
+        if (normalized !== value) {
+          balanceControl.patchValue(normalized, { emitEvent: false });
+        }
+      });
 
-  protected onLastDigitsInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.value.replace(/\D/g, '').substring(0, 4);
-    this.cardForm.patchValue({ lastDigits: value });
+    effect(() => {
+      if (!this.isSubmitting()) {
+        return;
+      }
+
+      if (this.cardsService.isLoading()) {
+        return;
+      }
+
+      if (this.cardsService.error()) {
+        this.isSubmitting.set(false);
+        return;
+      }
+
+      this.closeSheet();
+    });
   }
 
   protected getErrorMessage(controlName: string): string {
@@ -85,7 +97,13 @@ export class AddCard {
       return `Максимум ${control.errors['maxlength'].requiredLength} символов`;
     }
     if (control.errors['pattern']) {
-      return 'Введите 4 цифры';
+      if (controlName === 'lastDigits') {
+        return 'Введите 4 цифры';
+      }
+
+      if (controlName === 'balance') {
+        return 'Введите корректную сумму';
+      }
     }
 
     return 'Некорректное значение';
@@ -96,29 +114,24 @@ export class AddCard {
     return !!(control && control.touched && control.invalid);
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onSubmit(): void {
     if (this.cardForm.invalid || this.isSubmitting()) {
       this.cardForm.markAllAsTouched();
       return;
     }
 
+    this.cardsService.clearError();
+
+    const formValue = this.cardForm.getRawValue() as Omit<CardFormValue, 'balance'> & {
+      balance: string;
+    };
+    const dto: CreateCardDto = {
+      digits: formValue.lastDigits,
+      balance: Number(formValue.balance),
+    };
+
+    this.cardsService.createCard(dto);
     this.isSubmitting.set(true);
-
-    try {
-      const formValue = this.cardForm.value as CardFormValue;
-      console.log('Card added:', formValue);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // TODO: Save card data to service/store
-
-      this.router.navigate(['/home']);
-    } catch (error) {
-      console.error('Failed to add card:', error);
-      // TODO: Show error notification to user
-      this.isSubmitting.set(false);
-    }
   }
 
   protected onCancel(): void {
@@ -128,6 +141,12 @@ export class AddCard {
         return;
       }
     }
-    this.router.navigate(['/home']);
+    this.closeSheet();
+  }
+
+  private closeSheet(): void {
+    this.router.navigate([{ outlets: { sheet: null } }]).catch((error) => {
+      console.error('Navigation failed:', error);
+    });
   }
 }
