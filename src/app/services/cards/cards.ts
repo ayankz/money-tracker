@@ -15,7 +15,6 @@ export class CardsService {
 
   readonly cards = this.store.cards;
   readonly isLoading = this.store.isLoading;
-  readonly error = this.store.error;
   readonly cardsCount = this.store.cardsCount;
   readonly hasCards = this.store.hasCards;
   readonly totalBalance = this.store.totalBalance;
@@ -30,9 +29,5 @@ export class CardsService {
 
   deleteCard(id: number): void {
     this.store.deleteCard(id);
-  }
-
-  clearError(): void {
-    this.store.clearError();
   }
 }

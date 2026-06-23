@@ -6,7 +6,7 @@ export interface Card {
 }
 
 export interface CreateCardDto {
-  // readonly name: string;
+  readonly cardName: string;
   readonly digits: string;
   readonly balance: number;
 }

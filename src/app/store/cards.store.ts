@@ -4,17 +4,16 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { BaseHttp } from '../services/base-http/base-http';
 import type { Card, CreateCardDto } from '../models/card.model';
+import { NotificationsService } from '../services/notifications/notifications';
 
 interface CardsState {
   readonly cards: ReadonlyArray<Card>;
   readonly isLoading: boolean;
-  readonly error: string | null;
 }
 
 const initialState: CardsState = {
   cards: [],
   isLoading: false,
-  error: null,
 };
 
 const API_URL = '/api/cards' as const;
@@ -36,11 +35,12 @@ export const CardsStore = signalStore(
   })),
   withMethods((store) => {
     const http = inject(BaseHttp);
+    const notifications = inject(NotificationsService);
 
     return {
       loadCards: rxMethod<void>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
+          tap(() => patchState(store, { isLoading: true })),
           switchMap(() =>
             http.get<Card[]>(API_URL).pipe(
               tap((cards) =>
@@ -49,10 +49,9 @@ export const CardsStore = signalStore(
                   isLoading: false,
                 })
               ),
-              catchError((error) => {
+              catchError(() => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to load cards',
                 });
                 return of([]);
               })
@@ -63,19 +62,19 @@ export const CardsStore = signalStore(
 
       createCard: rxMethod<CreateCardDto>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
+          tap(() => patchState(store, { isLoading: true })),
           switchMap((dto) =>
             http.post<Card>(API_URL, dto).pipe(
-              tap((newCard) =>
+              tap((newCard) => {
                 patchState(store, {
                   cards: [...store.cards(), normalizeCard(newCard)],
                   isLoading: false,
-                })
-              ),
-              catchError((error) => {
+                });
+                notifications.success();
+              }),
+              catchError(() => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to create card',
                 });
                 return of(null);
               })
@@ -86,19 +85,19 @@ export const CardsStore = signalStore(
 
       deleteCard: rxMethod<number>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
+          tap(() => patchState(store, { isLoading: true })),
           switchMap((id) =>
             http.delete<void>(`${API_URL}/${id}`).pipe(
-              tap(() =>
+              tap(() => {
                 patchState(store, {
                   cards: store.cards().filter((card) => card.id !== id),
                   isLoading: false,
-                })
-              ),
-              catchError((error) => {
+                });
+                notifications.success();
+              }),
+              catchError(() => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to delete card',
                 });
                 return of(null);
               })
@@ -106,10 +105,6 @@ export const CardsStore = signalStore(
           )
         )
       ),
-
-      clearError(): void {
-        patchState(store, { error: null });
-      },
     };
   })
 );
