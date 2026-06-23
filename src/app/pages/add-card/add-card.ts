@@ -7,7 +7,7 @@ import type { CreateCardDto } from '../../models/card.model';
 import { CardsService } from '../../services/cards/cards';
 
 interface CardFormValue {
-  // cardName: string;
+  cardName: string;
   lastDigits: string;
   balance: number;
 }
@@ -25,9 +25,10 @@ export class AddCard {
   private readonly cardsService = inject(CardsService);
 
   protected readonly isSubmitting = signal(false);
+  private submittedCardsCount: number | null = null;
 
   protected readonly cardForm: FormGroup = this.fb.group({
-    // cardName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+    cardName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     lastDigits: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
     balance: ['', [Validators.required, Validators.pattern(/^\d+([.,]\d{0,2})?$/)]],
   });
@@ -81,12 +82,18 @@ export class AddCard {
         return;
       }
 
-      if (this.cardsService.error()) {
+      if (this.submittedCardsCount === null) {
         this.isSubmitting.set(false);
         return;
       }
 
-      this.closeSheet();
+      if (this.cardsService.cardsCount() > this.submittedCardsCount) {
+        this.closeSheet();
+        return;
+      }
+
+      this.submittedCardsCount = null;
+      this.isSubmitting.set(false);
     });
   }
 
@@ -129,16 +136,16 @@ export class AddCard {
       return;
     }
 
-    this.cardsService.clearError();
-
     const formValue = this.cardForm.getRawValue() as Omit<CardFormValue, 'balance'> & {
       balance: string;
     };
     const dto: CreateCardDto = {
+      cardName: formValue.cardName.trim(),
       digits: formValue.lastDigits,
       balance: Number(formValue.balance),
     };
 
+    this.submittedCardsCount = this.cardsService.cardsCount();
     this.cardsService.createCard(dto);
     this.isSubmitting.set(true);
   }
@@ -154,6 +161,7 @@ export class AddCard {
   }
 
   private closeSheet(): void {
+    this.submittedCardsCount = null;
     this.router.navigate([{ outlets: { sheet: null } }]).catch((error) => {
       console.error('Navigation failed:', error);
     });

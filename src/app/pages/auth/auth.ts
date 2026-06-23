@@ -156,6 +156,7 @@ export class Auth {
 
     const cleanup = () => {
       window.clearTimeout(timeout);
+      window.clearInterval(closedCheckInterval);
       window.removeEventListener('message', onMessage);
     };
 
@@ -167,6 +168,14 @@ export class Auth {
       popup.close();
 
       this.serverError.set(message);
+      this.setLoading(false);
+    };
+
+    const finishSilently = () => {
+      if (isFinished) return;
+
+      isFinished = true;
+      cleanup();
       this.setLoading(false);
     };
 
@@ -217,6 +226,12 @@ export class Auth {
     };
 
     window.addEventListener('message', onMessage);
+
+    const closedCheckInterval = window.setInterval(() => {
+      if (popup.closed) {
+        finishSilently();
+      }
+    }, 500);
 
     const timeout = window.setTimeout(() => {
       finishWithError(
