@@ -26,7 +26,7 @@ export class OperationsService {
     this.store.loadOperations();
   }
 
-  loadOperation(id: string): void {
+  loadOperation(id: string | number): void {
     this.store.loadOperation(id);
   }
 
@@ -34,7 +34,7 @@ export class OperationsService {
     this.store.createOperation(operation);
   }
 
-  deleteOperation(id: string): void {
+  deleteOperation(id: string | number): void {
     this.store.deleteOperation(id);
   }
 

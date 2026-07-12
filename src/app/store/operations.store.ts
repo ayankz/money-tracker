@@ -3,24 +3,25 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { BaseHttp } from '../services/base-http/base-http';
+import { NotificationsService } from '../services/notifications/notifications';
 
-export type OperationType = 'income' | 'expense';
+export type OperationType = 'INCOME' | 'EXPENSE';
 
 export interface Operation {
-  readonly id: string;
-  readonly amount: number;
-  readonly category: string;
-  readonly description: string;
-  readonly date: string;
+  readonly id: string | number;
   readonly type: OperationType;
+  readonly amount: number;
+  readonly categoryId?: number;
+  readonly comment?: string;
+  readonly accountId?: number;
 }
 
 export interface CreateOperationDto {
-  readonly amount: number;
-  readonly category: string;
-  readonly description: string;
-  readonly date: string;
   readonly type: OperationType;
+  readonly amount: number;
+  readonly categoryId?: number;
+  readonly comment?: string;
+  readonly accountId?: number;
 }
 
 interface OperationsState {
@@ -44,27 +45,33 @@ export const OperationsStore = signalStore(
   withState(initialState),
   withComputed(({ operations }) => ({
     operationsCount: computed(() => operations().length),
-    incomeOperations: computed(() => operations().filter(op => op.type === 'income')),
-    expenseOperations: computed(() => operations().filter(op => op.type === 'expense')),
+    incomeOperations: computed(() => operations().filter((operation) => operation.type === 'INCOME')),
+    expenseOperations: computed(() => operations().filter((operation) => operation.type === 'EXPENSE')),
     totalIncome: computed(() =>
       operations()
-        .filter(op => op.type === 'income')
-        .reduce((sum, op) => sum + op.amount, 0)
+        .filter((operation) => operation.type === 'INCOME')
+        .reduce((sum, operation) => sum + operation.amount, 0)
     ),
     totalExpense: computed(() =>
       operations()
-        .filter(op => op.type === 'expense')
-        .reduce((sum, op) => sum + op.amount, 0)
+        .filter((operation) => operation.type === 'EXPENSE')
+        .reduce((sum, operation) => sum + operation.amount, 0)
     ),
     balance: computed(() => {
-      const income = operations().filter(op => op.type === 'income').reduce((sum, op) => sum + op.amount, 0);
-      const expense = operations().filter(op => op.type === 'expense').reduce((sum, op) => sum + op.amount, 0);
+      const income = operations()
+        .filter((operation) => operation.type === 'INCOME')
+        .reduce((sum, operation) => sum + operation.amount, 0);
+      const expense = operations()
+        .filter((operation) => operation.type === 'EXPENSE')
+        .reduce((sum, operation) => sum + operation.amount, 0);
+
       return income - expense;
     }),
     hasOperations: computed(() => operations().length > 0),
   })),
   withMethods((store) => {
     const http = inject(BaseHttp);
+    const notifications = inject(NotificationsService);
 
     return {
       loadOperations: rxMethod<void>(
@@ -72,11 +79,11 @@ export const OperationsStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
             http.get<Operation[]>(API_URL).pipe(
-              tap(operations => patchState(store, { operations, isLoading: false })),
-              catchError(error => {
+              tap((operations) => patchState(store, { operations, isLoading: false })),
+              catchError((error) => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to load operations'
+                  error: error.message || 'Failed to load operations',
                 });
                 return of([]);
               })
@@ -85,16 +92,16 @@ export const OperationsStore = signalStore(
         )
       ),
 
-      loadOperation: rxMethod<string>(
+      loadOperation: rxMethod<string | number>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(id =>
+          switchMap((id) =>
             http.get<Operation>(`${API_URL}/${id}`).pipe(
-              tap(operation => patchState(store, { selectedOperation: operation, isLoading: false })),
-              catchError(error => {
+              tap((operation) => patchState(store, { selectedOperation: operation, isLoading: false })),
+              catchError((error) => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to load operation'
+                  error: error.message || 'Failed to load operation',
                 });
                 return of(null);
               })
@@ -106,18 +113,19 @@ export const OperationsStore = signalStore(
       createOperation: rxMethod<CreateOperationDto>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(dto =>
+          switchMap((dto) =>
             http.post<Operation>(API_URL, dto).pipe(
-              tap(newOperation =>
+              tap((newOperation) => {
                 patchState(store, {
                   operations: [...store.operations(), newOperation],
                   isLoading: false,
-                })
-              ),
-              catchError(error => {
+                });
+                notifications.success();
+              }),
+              catchError((error) => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to create operation'
+                  error: error.message || 'Failed to create operation',
                 });
                 return of(null);
               })
@@ -126,21 +134,22 @@ export const OperationsStore = signalStore(
         )
       ),
 
-      deleteOperation: rxMethod<string>(
+      deleteOperation: rxMethod<string | number>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(id =>
+          switchMap((id) =>
             http.delete<void>(`${API_URL}/${id}`).pipe(
-              tap(() =>
+              tap(() => {
                 patchState(store, {
-                  operations: store.operations().filter(op => op.id !== id),
+                  operations: store.operations().filter((operation) => operation.id !== id),
                   isLoading: false,
-                })
-              ),
-              catchError(error => {
+                });
+                notifications.success();
+              }),
+              catchError((error) => {
                 patchState(store, {
                   isLoading: false,
-                  error: error.message || 'Failed to delete operation'
+                  error: error.message || 'Failed to delete operation',
                 });
                 return of(null);
               })

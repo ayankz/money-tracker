@@ -1,9 +1,176 @@
-<div class="add-transaction">
-  <app-header title="Добавить операцию" />
+<app-header title="Добавить операцию" />
 
-  <div class="add-transaction__content">
-    <p class="add-transaction__placeholder">
-      Здесь будет форма создания транзакции внутри bottom sheet.
-    </p>
+<app-entity-form-shell [formGroup]="transactionForm" ariaLabel="Форма добавления операции" (submitted)="onSubmit()">
+  <div entityFormContent class="entity-form-stack">
+    <div class="entity-field">
+      <span class="entity-label">
+        Тип операции
+        <span class="required">*</span>
+      </span>
+      <div class="entity-radio-group" role="radiogroup" aria-label="Тип операции">
+        @for (type of operationTypes; track type.value) {
+          <label class="entity-radio" [class.entity-radio--disabled]="isSubmitting()">
+            <input
+              class="entity-radio__input"
+              type="radio"
+              name="operationType"
+              [value]="type.value"
+              [checked]="selectedType() === type.value"
+              [disabled]="isSubmitting()"
+              (change)="selectType(type.value)"
+            />
+            <span class="entity-radio__control" aria-hidden="true"></span>
+            <span class="entity-radio__label">{{ type.label }}</span>
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="operation-amount">
+        Сумма
+        <span class="required">*</span>
+      </label>
+      <input
+        id="operation-amount"
+        type="text"
+        class="entity-input"
+        [class.error]="hasError('amount')"
+        placeholder="например, 1250"
+        inputmode="decimal"
+        [formControl]="amountControl"
+        [attr.aria-invalid]="hasError('amount')"
+        [attr.aria-describedby]="hasError('amount') ? 'operation-amount-error' : null"
+      />
+      @if (hasError('amount')) {
+        <span id="operation-amount-error" class="entity-error" role="alert">
+          {{ getErrorMessage('amount') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="operation-account">Аккаунт</label>
+      <div class="entity-dropdown">
+        <button
+          id="operation-account"
+          type="button"
+          class="entity-select entity-select--button"
+          [class.entity-select--open]="isAccountDropdownOpen()"
+          [disabled]="isSubmitting()"
+          [attr.aria-expanded]="isAccountDropdownOpen()"
+          aria-haspopup="listbox"
+          (click)="toggleAccountDropdown()"
+        >
+          <span>{{ selectedAccountLabel() }}</span>
+        </button>
+
+        @if (isAccountDropdownOpen()) {
+          <div class="entity-dropdown__menu" role="listbox" aria-label="Выбор аккаунта">
+            <button
+              type="button"
+              class="entity-dropdown__option"
+              [class.entity-dropdown__option--selected]="!accountIdControl.value"
+              (click)="selectAccount('')"
+            >
+              Без аккаунта
+            </button>
+            @for (account of accounts(); track account.id) {
+              <button
+                type="button"
+                class="entity-dropdown__option"
+                [class.entity-dropdown__option--selected]="accountIdControl.value === asString(account.id)"
+                (click)="selectAccount(asString(account.id))"
+              >
+                {{ getAccountLabel(account) }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="operation-category">Категория</label>
+      <div class="entity-dropdown">
+        <button
+          id="operation-category"
+          type="button"
+          class="entity-select entity-select--button"
+          [class.entity-select--open]="isCategoryDropdownOpen()"
+          [disabled]="isSubmitting()"
+          [attr.aria-expanded]="isCategoryDropdownOpen()"
+          aria-haspopup="listbox"
+          (click)="toggleCategoryDropdown()"
+        >
+          <span>{{ selectedCategoryLabel() }}</span>
+        </button>
+
+        @if (isCategoryDropdownOpen()) {
+          <div class="entity-dropdown__menu" role="listbox" aria-label="Выбор категории">
+            <button
+              type="button"
+              class="entity-dropdown__option"
+              [class.entity-dropdown__option--selected]="!categoryIdControl.value"
+              (click)="selectCategory('')"
+            >
+              Без категории
+            </button>
+            @for (category of filteredCategories(); track category.id) {
+              <button
+                type="button"
+                class="entity-dropdown__option"
+                [class.entity-dropdown__option--selected]="categoryIdControl.value === category.id"
+                (click)="selectCategory(category.id)"
+              >
+                {{ category.name }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="operation-comment">Комментарий</label>
+      <textarea
+        id="operation-comment"
+        class="entity-textarea"
+        [class.error]="hasError('comment')"
+        placeholder="например, Покупка продуктов"
+        [formControl]="commentControl"
+        [attr.aria-invalid]="hasError('comment')"
+        [attr.aria-describedby]="hasError('comment') ? 'operation-comment-error' : null"
+      ></textarea>
+      @if (hasError('comment')) {
+        <span id="operation-comment-error" class="entity-error" role="alert">
+          {{ getErrorMessage('comment') }}
+        </span>
+      }
+    </div>
   </div>
-</div>
+
+  <div entityFormActions>
+    <button
+      type="submit"
+      class="entity-btn entity-btn--primary"
+      [disabled]="transactionForm.invalid || isSubmitting()"
+      [attr.aria-busy]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        <span class="entity-spinner" aria-hidden="true"></span>
+        <span>Добавление...</span>
+      } @else {
+        <span>Добавить операцию</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="entity-btn entity-btn--secondary"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+    >
+      Отмена
+    </button>
+  </div>
+</app-entity-form-shell>
