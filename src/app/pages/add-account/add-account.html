@@ -1,177 +1,170 @@
 <app-header title="Добавить аккаунт" />
 
-<div class="add-card-page">
-  <form [formGroup]="accountForm" class="form" (ngSubmit)="onSubmit()">
-    <div class="form-content">
-      <div class="form-group">
-        <span class="label">
+<app-entity-form-shell [formGroup]="accountForm" ariaLabel="Форма добавления аккаунта" (submitted)="onSubmit()">
+  <div entityFormContent class="entity-form-stack">
+    <div class="entity-field">
+      <span class="entity-label">
           Тип аккаунта
           <span class="required">*</span>
         </span>
-        <div class="type-radio-group" role="radiogroup" aria-label="Тип аккаунта">
-          @for (type of accountTypes; track type.value) {
-            <label class="type-radio" [class.type-radio--disabled]="isSubmitting()">
-              <input
-                class="type-radio__input"
-                type="radio"
-                name="accountType"
-                [value]="type.value"
-                [checked]="selectedAccountType() === type.value"
-                [disabled]="isSubmitting()"
-                (change)="selectAccountType(type.value)"
-              />
-              <span class="type-radio__control" aria-hidden="true"></span>
-              <span class="type-radio__label">{{ type.label }}</span>
-            </label>
-          }
-        </div>
+      <div class="entity-radio-group" role="radiogroup" aria-label="Тип аккаунта">
+        @for (type of accountTypes; track type.value) {
+          <label class="entity-radio" [class.entity-radio--disabled]="isSubmitting()">
+            <input
+              class="entity-radio__input"
+              type="radio"
+              name="accountType"
+              [value]="type.value"
+              [checked]="selectedAccountType() === type.value"
+              [disabled]="isSubmitting()"
+              (change)="selectAccountType(type.value)"
+            />
+            <span class="entity-radio__control" aria-hidden="true"></span>
+            <span class="entity-radio__label">{{ type.label }}</span>
+          </label>
+        }
       </div>
+    </div>
 
-      <div class="form-group">
-        <label class="label" for="name">
+    <div class="entity-field">
+      <label class="entity-label" for="name">
           Название счёта
           <span class="required">*</span>
         </label>
         <input
           type="text"
           id="name"
-          class="input"
+          class="entity-input"
           [class.error]="hasError('name')"
           placeholder="например, Основной счёт"
-          formControlName="name"
-          [disabled]="isSubmitting()"
+          [formControl]="nameControl"
           [attr.aria-invalid]="hasError('name')"
           [attr.aria-describedby]="hasError('name') ? 'name-error' : null"
         />
         @if (hasError('name')) {
-          <span id="name-error" class="error-message" role="alert">
+          <span id="name-error" class="entity-error" role="alert">
             {{ getErrorMessage('name') }}
           </span>
         }
-      </div>
+    </div>
 
-      <div class="form-group">
-        <span class="label">
+    <div class="entity-field">
+      <span class="entity-label">
           Валюта
           <span class="required">*</span>
         </span>
-        <div class="type-radio-group" role="radiogroup" aria-label="Валюта аккаунта">
-          @for (currency of currencies; track currency.value) {
-            <label class="type-radio" [class.type-radio--disabled]="isSubmitting()">
-              <input
-                class="type-radio__input"
-                type="radio"
-                name="accountCurrency"
-                [value]="currency.value"
-                [checked]="selectedCurrency() === currency.value"
-                [disabled]="isSubmitting()"
-                (change)="selectCurrency(currency.value)"
-              />
-              <span class="type-radio__control" aria-hidden="true"></span>
-              <span class="type-radio__label">{{ currency.label }}</span>
-            </label>
-          }
-        </div>
+      <div class="entity-radio-group" role="radiogroup" aria-label="Валюта аккаунта">
+        @for (currency of currencies; track currency.value) {
+          <label class="entity-radio" [class.entity-radio--disabled]="isSubmitting()">
+            <input
+              class="entity-radio__input"
+              type="radio"
+              name="accountCurrency"
+              [value]="currency.value"
+              [checked]="selectedCurrency() === currency.value"
+              [disabled]="isSubmitting()"
+              (change)="selectCurrency(currency.value)"
+            />
+            <span class="entity-radio__control" aria-hidden="true"></span>
+            <span class="entity-radio__label">{{ currency.label }}</span>
+          </label>
+        }
       </div>
+    </div>
 
-      @if (isCardAccount()) {
-        <div class="form-group">
-          <label class="label" for="cardName">
+    @if (isCardAccount()) {
+      <div class="entity-field">
+        <label class="entity-label" for="cardName">
             Название карты
             <span class="required">*</span>
           </label>
           <input
             type="text"
             id="cardName"
-            class="input"
+            class="entity-input"
             [class.error]="hasError('cardName')"
             placeholder="например, Kaspi Gold"
-            formControlName="cardName"
-            [disabled]="isSubmitting()"
+            [formControl]="cardNameControl"
             [attr.aria-invalid]="hasError('cardName')"
             [attr.aria-describedby]="hasError('cardName') ? 'cardName-error' : null"
           />
           @if (hasError('cardName')) {
-            <span id="cardName-error" class="error-message" role="alert">
+            <span id="cardName-error" class="entity-error" role="alert">
               {{ getErrorMessage('cardName') }}
             </span>
           }
-        </div>
+      </div>
 
-        <div class="form-group">
-          <label class="label" for="lastDigits">
+      <div class="entity-field">
+        <label class="entity-label" for="lastDigits">
             Последние 4 цифры
             <span class="required">*</span>
           </label>
           <input
             type="text"
             id="lastDigits"
-            class="input"
+            class="entity-input"
             [class.error]="hasError('lastDigits')"
             placeholder="0000"
-            formControlName="lastDigits"
+            [formControl]="lastDigitsControl"
             maxlength="4"
             inputmode="numeric"
-            [disabled]="isSubmitting()"
             [attr.aria-invalid]="hasError('lastDigits')"
             [attr.aria-describedby]="hasError('lastDigits') ? 'lastDigits-error' : null"
           />
           @if (hasError('lastDigits')) {
-            <span id="lastDigits-error" class="error-message" role="alert">
+            <span id="lastDigits-error" class="entity-error" role="alert">
               {{ getErrorMessage('lastDigits') }}
             </span>
           }
-        </div>
-      }
+      </div>
+    }
 
-      <div class="form-group">
-        <label class="label" for="balance">
+    <div class="entity-field">
+      <label class="entity-label" for="balance">
           Баланс аккаунта
           <span class="required">*</span>
         </label>
         <input
           type="text"
           id="balance"
-          class="input"
+          class="entity-input"
           [class.error]="hasError('balance')"
           placeholder="например, 12500"
-          formControlName="balance"
+          [formControl]="balanceControl"
           inputmode="decimal"
-          [disabled]="isSubmitting()"
           [attr.aria-invalid]="hasError('balance')"
           [attr.aria-describedby]="hasError('balance') ? 'balance-error' : null"
         />
         @if (hasError('balance')) {
-          <span id="balance-error" class="error-message" role="alert">
+          <span id="balance-error" class="entity-error" role="alert">
             {{ getErrorMessage('balance') }}
           </span>
         }
-      </div>
-
     </div>
+  </div>
 
-    <div class="actions">
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="accountForm.invalid || isSubmitting()"
-        [attr.aria-busy]="isSubmitting()"
-      >
-        @if (isSubmitting()) {
-          <span class="spinner" aria-hidden="true"></span>
+  <div entityFormActions>
+    <button
+      type="submit"
+      class="entity-btn entity-btn--primary"
+      [disabled]="accountForm.invalid || isSubmitting()"
+      [attr.aria-busy]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        <span class="entity-spinner" aria-hidden="true"></span>
           <span>Добавление...</span>
-        } @else {
-          <span>Добавить аккаунт</span>
-        }
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="onCancel()"
-        [disabled]="isSubmitting()"
-      >
-        Отмена
-      </button>
-    </div>
-  </form>
-</div>
+      } @else {
+        <span>Добавить аккаунт</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="entity-btn entity-btn--secondary"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+    >
+      Отмена
+    </button>
+  </div>
+</app-entity-form-shell>

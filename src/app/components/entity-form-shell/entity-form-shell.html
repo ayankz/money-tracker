@@ -1,0 +1,16 @@
+<div class="entity-form-page">
+  <form
+    class="entity-form"
+    [formGroup]="formGroup()"
+    [attr.aria-label]="ariaLabel()"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="entity-form__content">
+      <ng-content select="[entityFormContent]"></ng-content>
+    </div>
+
+    <div class="entity-form__actions">
+      <ng-content select="[entityFormActions]"></ng-content>
+    </div>
+  </form>
+</div>

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { EntityFormShell } from '../../components/entity-form-shell/entity-form-shell';
 import { Header } from '../../components/header/header';
 import type { CreateAccountDto } from '../../models/account.model';
 import { AccountsService } from '../../services/accounts/accounts';
@@ -17,7 +18,7 @@ interface AccountFormValue {
 
 @Component({
   selector: 'app-add-account',
-  imports: [Header, ReactiveFormsModule],
+  imports: [Header, EntityFormShell, ReactiveFormsModule],
   templateUrl: './add-account.html',
   styleUrl: './add-account.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,6 +51,10 @@ export class AddAccount {
     lastDigits: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
     balance: ['', [Validators.required, Validators.pattern(/^\d+([.,]\d{0,2})?$/)]],
   });
+  protected readonly nameControl = this.accountForm.get('name') as FormControl<string>;
+  protected readonly cardNameControl = this.accountForm.get('cardName') as FormControl<string>;
+  protected readonly lastDigitsControl = this.accountForm.get('lastDigits') as FormControl<string>;
+  protected readonly balanceControl = this.accountForm.get('balance') as FormControl<string>;
 
   constructor() {
     const typeControl = this.accountForm.get('type');
