@@ -27,8 +27,8 @@ export class Navbar {
     this.closeMenu();
 
     switch (action) {
-      case 'card':
-        this.router.navigate([{ outlets: { sheet: ['add-card'] } }]);
+      case 'account':
+        this.router.navigate([{ outlets: { sheet: ['add-account'] } }], { replaceUrl: true });
         break;
       case 'category':
         this.router.navigate([{ outlets: { sheet: ['add-category'] } }]);

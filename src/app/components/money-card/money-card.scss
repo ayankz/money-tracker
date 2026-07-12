@@ -30,25 +30,48 @@
   position: absolute;
   top: 18px;
   right: 14px;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: var(--profile-surface-overlay);
+  background: rgba(255, 255, 255, 0.18);
   cursor: pointer;
   z-index: 1;
 }
 
+.bank-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-right: 52px;
+}
+
+.bank-card__type {
+  max-width: 110px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
 .bank-card__title {
   margin: 0;
-  padding-right: 44px;
   font-size: 17px;
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.2;
+  flex: 1;
 }
 
 .bank-card__middle {
@@ -80,8 +103,9 @@
   letter-spacing: 0.18em;
 }
 
-.icon-image--sm {
+.bank-card__delete-icon {
   width: 18px;
   height: 18px;
   display: block;
+  flex-shrink: 0;
 }

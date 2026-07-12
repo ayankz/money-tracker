@@ -7,9 +7,8 @@ import {
   signal,
   HostListener,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -33,23 +32,16 @@ export class Header {
   readonly actionClick = output<void>();
 
   protected readonly showProfileMenu = signal<boolean>(false);
-  private readonly navigationHistoryExists = signal<boolean>(false);
 
   private readonly router = inject(Router);
   private readonly location = inject(Location);
 
-  constructor() {
-    // Track navigation history to safely use location.back()
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.navigationHistoryExists.set(true);
-      });
-  }
-
   protected goBack(): void {
-    // Use browser history if available, otherwise fallback to specified route
-    if (this.navigationHistoryExists()) {
+    const historyState = this.location.getState() as { navigationId?: number } | null;
+    const canUseBrowserBack =
+      typeof historyState?.navigationId === 'number' && historyState.navigationId > 1;
+
+    if (canUseBrowserBack) {
       this.location.back();
     } else {
       this.router.navigate([this.fallbackRoute()]).catch((error) => {

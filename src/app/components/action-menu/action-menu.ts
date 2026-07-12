@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostListener, output, signal, AfterViewInit, ElementRef, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-export type ActionType = 'import' | 'category' | 'card' | 'transaction';
+export type ActionType = 'import' | 'category' | 'account' | 'transaction';
 
 export interface MenuAction {
   type: ActionType;
@@ -38,10 +38,10 @@ export class ActionMenu implements AfterViewInit {
       ariaLabel: 'Create new category'
     },
     {
-      type: 'card',
-      label: 'Add Card',
+      type: 'account',
+      label: 'Add Account',
       iconSvg: this.sanitizer.bypassSecurityTrustHtml('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x="1" y1="10" x2="23" y2="10"/></svg>'),
-      ariaLabel: 'Add credit or debit card'
+      ariaLabel: 'Add account'
     },
     {
       type: 'transaction',

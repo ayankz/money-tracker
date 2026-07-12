@@ -5,6 +5,8 @@ export interface MoneyCard {
   id: number;
   name: string;
   digits: string;
+  showDigits?: boolean;
+  typeLabel?: string;
   color: string;
   balance: number;
 }

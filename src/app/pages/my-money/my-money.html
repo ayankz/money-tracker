@@ -1,15 +1,15 @@
 <app-header title="My Money" [showBackButton]="true" />
 <section class="my-money-page">
   <section class="my-money-section">
-    <app-cards-section
-      [cards]="cards()"
-      [title]="'Your Cards'"
+    <app-accounts-section
+      [accounts]="accounts()"
+      [title]="'Your Accounts'"
       [actionLabel]="'Add New'"
       [layout]="'stack'"
-      [showAddCardTile]="false"
+      [showAddAccountTile]="false"
       [showDelete]="true"
-      (action)="openAddCard()"
-      (removeCard)="removeCard($event)"
+      (action)="openAddAccount()"
+      (removeAccount)="removeAccount($event)"
     />
   </section>
 </section>

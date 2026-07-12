@@ -1,42 +1,44 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
-import { CardsSection } from '../../components/cards-section/cards-section';
+import { AccountsSection } from '../../components/cards-section/cards-section';
 import type { MoneyCard } from '../../components/money-card/money-card';
-import { CardsService } from '../../services/cards/cards';
+import { AccountsService } from '../../services/accounts/accounts';
 
 @Component({
   selector: 'app-my-money',
-  imports: [Header, CardsSection],
+  imports: [Header, AccountsSection],
   templateUrl: './my-money.html',
   styleUrl: './my-money.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyMoney {
   private readonly router = inject(Router);
-  private readonly cardsService = inject(CardsService);
+  private readonly accountsService = inject(AccountsService);
 
-  protected readonly cards = computed<ReadonlyArray<MoneyCard>>(() =>
-    this.cardsService.cards().map((card) => ({
-      id: card.id,
-      name: card.name ?? 'Card',
-      digits: card.digits,
-      balance: Number(card.balance),
+  protected readonly accounts = computed<ReadonlyArray<MoneyCard>>(() =>
+    this.accountsService.accounts().map((account) => ({
+      id: account.id,
+      name: account.cardName ?? account.name ?? 'Account',
+      digits: account.digits,
+      showDigits: account.type === 'CARD',
+      typeLabel: account.type === 'CARD' ? 'Карта' : 'Наличка',
+      balance: Number(account.balance),
       color: 'var(--profile-card-gradient)',
     }))
   );
 
   constructor() {
-    if (!this.cardsService.hasCards() && !this.cardsService.isLoading()) {
-      void this.cardsService.loadCards();
+    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+      void this.accountsService.loadAccounts();
     }
   }
 
-  protected openAddCard(): void {
-    void this.router.navigate([{ outlets: { sheet: ['add-card'] } }]);
+  protected openAddAccount(): void {
+    void this.router.navigate([{ outlets: { sheet: ['add-account'] } }], { replaceUrl: true });
   }
 
-  protected removeCard(cardId: number): void {
-    this.cardsService.deleteCard(cardId);
+  protected removeAccount(accountId: number): void {
+    this.accountsService.deleteAccount(accountId);
   }
 }

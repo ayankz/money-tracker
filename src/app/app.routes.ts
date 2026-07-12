@@ -48,7 +48,7 @@ export const routes: Routes = [
     children: []
   },
   {
-    path: 'add-card',
+    path: 'add-account',
     outlet: 'sheet',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -56,7 +56,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./pages/add-card/add-card').then(m => m.AddCard)
+        loadComponent: () => import('./pages/add-account/add-account').then(m => m.AddAccount)
       }
     ]
   },

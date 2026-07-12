@@ -1,0 +1,177 @@
+<app-header title="Добавить аккаунт" />
+
+<div class="add-card-page">
+  <form [formGroup]="accountForm" class="form" (ngSubmit)="onSubmit()">
+    <div class="form-content">
+      <div class="form-group">
+        <span class="label">
+          Тип аккаунта
+          <span class="required">*</span>
+        </span>
+        <div class="type-radio-group" role="radiogroup" aria-label="Тип аккаунта">
+          @for (type of accountTypes; track type.value) {
+            <label class="type-radio" [class.type-radio--disabled]="isSubmitting()">
+              <input
+                class="type-radio__input"
+                type="radio"
+                name="accountType"
+                [value]="type.value"
+                [checked]="selectedAccountType() === type.value"
+                [disabled]="isSubmitting()"
+                (change)="selectAccountType(type.value)"
+              />
+              <span class="type-radio__control" aria-hidden="true"></span>
+              <span class="type-radio__label">{{ type.label }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label" for="name">
+          Название счёта
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="name"
+          class="input"
+          [class.error]="hasError('name')"
+          placeholder="например, Основной счёт"
+          formControlName="name"
+          [disabled]="isSubmitting()"
+          [attr.aria-invalid]="hasError('name')"
+          [attr.aria-describedby]="hasError('name') ? 'name-error' : null"
+        />
+        @if (hasError('name')) {
+          <span id="name-error" class="error-message" role="alert">
+            {{ getErrorMessage('name') }}
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <span class="label">
+          Валюта
+          <span class="required">*</span>
+        </span>
+        <div class="type-radio-group" role="radiogroup" aria-label="Валюта аккаунта">
+          @for (currency of currencies; track currency.value) {
+            <label class="type-radio" [class.type-radio--disabled]="isSubmitting()">
+              <input
+                class="type-radio__input"
+                type="radio"
+                name="accountCurrency"
+                [value]="currency.value"
+                [checked]="selectedCurrency() === currency.value"
+                [disabled]="isSubmitting()"
+                (change)="selectCurrency(currency.value)"
+              />
+              <span class="type-radio__control" aria-hidden="true"></span>
+              <span class="type-radio__label">{{ currency.label }}</span>
+            </label>
+          }
+        </div>
+      </div>
+
+      @if (isCardAccount()) {
+        <div class="form-group">
+          <label class="label" for="cardName">
+            Название карты
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="cardName"
+            class="input"
+            [class.error]="hasError('cardName')"
+            placeholder="например, Kaspi Gold"
+            formControlName="cardName"
+            [disabled]="isSubmitting()"
+            [attr.aria-invalid]="hasError('cardName')"
+            [attr.aria-describedby]="hasError('cardName') ? 'cardName-error' : null"
+          />
+          @if (hasError('cardName')) {
+            <span id="cardName-error" class="error-message" role="alert">
+              {{ getErrorMessage('cardName') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="label" for="lastDigits">
+            Последние 4 цифры
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="lastDigits"
+            class="input"
+            [class.error]="hasError('lastDigits')"
+            placeholder="0000"
+            formControlName="lastDigits"
+            maxlength="4"
+            inputmode="numeric"
+            [disabled]="isSubmitting()"
+            [attr.aria-invalid]="hasError('lastDigits')"
+            [attr.aria-describedby]="hasError('lastDigits') ? 'lastDigits-error' : null"
+          />
+          @if (hasError('lastDigits')) {
+            <span id="lastDigits-error" class="error-message" role="alert">
+              {{ getErrorMessage('lastDigits') }}
+            </span>
+          }
+        </div>
+      }
+
+      <div class="form-group">
+        <label class="label" for="balance">
+          Баланс аккаунта
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="balance"
+          class="input"
+          [class.error]="hasError('balance')"
+          placeholder="например, 12500"
+          formControlName="balance"
+          inputmode="decimal"
+          [disabled]="isSubmitting()"
+          [attr.aria-invalid]="hasError('balance')"
+          [attr.aria-describedby]="hasError('balance') ? 'balance-error' : null"
+        />
+        @if (hasError('balance')) {
+          <span id="balance-error" class="error-message" role="alert">
+            {{ getErrorMessage('balance') }}
+          </span>
+        }
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="accountForm.invalid || isSubmitting()"
+        [attr.aria-busy]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Добавление...</span>
+        } @else {
+          <span>Добавить аккаунт</span>
+        }
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()"
+      >
+        Отмена
+      </button>
+    </div>
+  </form>
+</div>

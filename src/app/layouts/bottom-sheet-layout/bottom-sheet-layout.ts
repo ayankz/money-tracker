@@ -26,6 +26,6 @@ export class BottomSheetLayout {
   }
 
   protected close(): void {
-    this.router.navigate([{ outlets: { sheet: null } }]);
+    this.router.navigate([{ outlets: { sheet: null } }], { replaceUrl: true });
   }
 }

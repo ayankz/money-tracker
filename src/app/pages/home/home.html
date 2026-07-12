@@ -1,34 +1,13 @@
 <app-header [showProfile]="true" [userName]="'John'" />
 
 <div class="content">
-  <app-financial-overview
-    [weeklyEarnings]="weeklyEarnings()"
-    [monthlyEarnings]="monthlyEarnings()"
-    [weeklySpending]="weeklySpending()"
-    [monthlySpending]="monthlySpending()"
-  />
+  <app-financial-overview [weeklyEarnings]="weeklyEarnings()" [monthlyEarnings]="monthlyEarnings()"
+    [weeklySpending]="weeklySpending()" [monthlySpending]="monthlySpending()" />
 
-  <app-cards-section
-    [cards]="cards()"
-    [cardsClickable]="true"
-    (action)="openMyMoney()"
-    (addCard)="openAddCard()"
-    (removeCard)="removeCard($event)"
-    (cardClick)="openMyMoney()"
-  />
+  <app-accounts-section [accounts]="accounts()" [accountsClickable]="true" (action)="openMyMoney()"
+    (addAccount)="openAddAccount()" (removeAccount)="removeAccount($event)" (accountClick)="openMyMoney()" />
 
-  <app-cash-wallet
-    [balance]="cashWalletBalance()"
-    (topUp)="topUpCashWallet()"
-  />
+  <app-upcoming-payments-section [payments]="upcomingPayments()" (paymentClick)="onPaymentClick($event)" />
 
-  <app-upcoming-payments-section
-    [payments]="upcomingPayments()"
-    (paymentClick)="onPaymentClick($event)"
-  />
-
-  <app-spending-analysis
-    [monthlyBudget]="monthlyBudget()"
-    [spent]="spent()"
-  />
+  <app-spending-analysis [monthlyBudget]="monthlyBudget()" [spent]="spent()" />
 </div>

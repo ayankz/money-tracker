@@ -3,49 +3,50 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { BaseHttp } from '../services/base-http/base-http';
-import type { Card, CreateCardDto } from '../models/card.model';
+import type { Account, CreateAccountDto } from '../models/account.model';
 import { NotificationsService } from '../services/notifications/notifications';
 
-interface CardsState {
-  readonly cards: ReadonlyArray<Card>;
+interface AccountsState {
+  readonly accounts: ReadonlyArray<Account>;
   readonly isLoading: boolean;
 }
 
-const initialState: CardsState = {
-  cards: [],
+const initialState: AccountsState = {
+  accounts: [],
   isLoading: false,
 };
 
-const API_URL = '/api/cards' as const;
+const API_URL = '/api/accounts' as const;
 
-function normalizeCard(card: Card): Card {
+function normalizeAccount(account: Account): Account {
   return {
-    ...card,
-    balance: Number(card.balance),
+    ...account,
+    name: account.name?.trim() || account.cardName?.trim() || 'Account',
+    balance: Number(account.balance),
   };
 }
 
-export const CardsStore = signalStore(
+export const AccountsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ cards }) => ({
-    cardsCount: computed(() => cards().length),
-    hasCards: computed(() => cards().length > 0),
-    totalBalance: computed(() => cards().reduce((sum, card) => sum + Number(card.balance), 0)),
+  withComputed(({ accounts }) => ({
+    accountsCount: computed(() => accounts().length),
+    hasAccounts: computed(() => accounts().length > 0),
+    totalBalance: computed(() => accounts().reduce((sum, account) => sum + Number(account.balance), 0)),
   })),
   withMethods((store) => {
     const http = inject(BaseHttp);
     const notifications = inject(NotificationsService);
 
     return {
-      loadCards: rxMethod<void>(
+      loadAccounts: rxMethod<void>(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
           switchMap(() =>
-            http.get<Card[]>(API_URL).pipe(
-              tap((cards) =>
+            http.get<Account[]>(API_URL).pipe(
+              tap((accounts) =>
                 patchState(store, {
-                  cards: cards.map(normalizeCard),
+                  accounts: accounts.map(normalizeAccount),
                   isLoading: false,
                 })
               ),
@@ -60,14 +61,14 @@ export const CardsStore = signalStore(
         )
       ),
 
-      createCard: rxMethod<CreateCardDto>(
+      createAccount: rxMethod<CreateAccountDto>(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
           switchMap((dto) =>
-            http.post<Card>(API_URL, dto).pipe(
-              tap((newCard) => {
+            http.post<Account>(API_URL, dto).pipe(
+              tap((newAccount) => {
                 patchState(store, {
-                  cards: [...store.cards(), normalizeCard(newCard)],
+                  accounts: [...store.accounts(), normalizeAccount(newAccount)],
                   isLoading: false,
                 });
                 notifications.success();
@@ -83,14 +84,14 @@ export const CardsStore = signalStore(
         )
       ),
 
-      deleteCard: rxMethod<number>(
+      deleteAccount: rxMethod<number>(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
           switchMap((id) =>
             http.delete<void>(`${API_URL}/${id}`).pipe(
               tap(() => {
                 patchState(store, {
-                  cards: store.cards().filter((card) => card.id !== id),
+                  accounts: store.accounts().filter((account) => account.id !== id),
                   isLoading: false,
                 });
                 notifications.success();

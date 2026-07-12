@@ -28,7 +28,7 @@ This directory contains layout components that define different page structures.
 - Used for forms and focused tasks
 
 **Routes using this layout:**
-- `/add-card` - Add new card form
+- `/add-account` - Add new account form
 - `/add-category` - Add new category form
 - `/add-transaction` - Add new transaction form
 

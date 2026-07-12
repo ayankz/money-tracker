@@ -5,21 +5,16 @@
   </div>
 
   <div class="cards-list" [class.cards-list--stack]="layout() === 'stack'">
-    @for (card of cards(); track card.id) {
-      <app-money-card
-        [card]="card"
-        [clickable]="cardsClickable()"
-        [showDelete]="showDelete()"
-        (open)="onCardClick(card.id)"
-        (remove)="onRemoveCard($event)"
-      />
+    @for (account of accounts(); track account.id) {
+    <app-money-card [card]="account" [clickable]="accountsClickable()" [showDelete]="showDelete()"
+      (open)="onAccountClick(account.id)" (remove)="onRemoveAccount($event)" />
     }
 
-    @if (showAddCardTile()) {
-      <button class="add-card" type="button" (click)="onAddCard()">
-        <span class="add-card__plus">+</span>
-        <span>Add Card</span>
-      </button>
+    @if (showAddAccountTile()) {
+    <button class="add-card" type="button" (click)="onAddAccount()">
+      <span class="add-card__plus">+</span>
+      <span>Add account</span>
+    </button>
     }
   </div>
 </section>
