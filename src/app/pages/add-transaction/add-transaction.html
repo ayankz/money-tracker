@@ -29,19 +29,27 @@
     <div class="entity-field">
       <label class="entity-label" for="operation-amount">
         Сумма
+        @if (selectedCurrencyLabel()) {
+          <span class="entity-label__hint">{{ selectedCurrencyLabel() }}</span>
+        }
         <span class="required">*</span>
       </label>
-      <input
-        id="operation-amount"
-        type="text"
-        class="entity-input"
-        [class.error]="hasError('amount')"
-        placeholder="например, 1250"
-        inputmode="decimal"
-        [formControl]="amountControl"
-        [attr.aria-invalid]="hasError('amount')"
-        [attr.aria-describedby]="hasError('amount') ? 'operation-amount-error' : null"
-      />
+      <div class="entity-input-with-suffix" [class.entity-input-with-suffix--error]="hasError('amount')">
+        <input
+          id="operation-amount"
+          type="text"
+          class="entity-input entity-input--with-suffix"
+          [class.error]="hasError('amount')"
+          placeholder="например, 1250"
+          inputmode="decimal"
+          [formControl]="amountControl"
+          [attr.aria-invalid]="hasError('amount')"
+          [attr.aria-describedby]="hasError('amount') ? 'operation-amount-error' : null"
+        />
+        @if (selectedCurrencyLabel()) {
+          <span class="entity-input__suffix">{{ selectedCurrencyLabel() }}</span>
+        }
+      </div>
       @if (hasError('amount')) {
         <span id="operation-amount-error" class="entity-error" role="alert">
           {{ getErrorMessage('amount') }}

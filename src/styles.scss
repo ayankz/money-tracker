@@ -60,6 +60,12 @@
   margin-left: 2px;
 }
 
+.entity-label__hint {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
 .entity-input {
   width: 100%;
   height: 56px;
@@ -96,6 +102,25 @@
 .entity-input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.entity-input-with-suffix {
+  position: relative;
+}
+
+.entity-input--with-suffix {
+  padding-right: 72px;
+}
+
+.entity-input__suffix {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: none;
 }
 
 .entity-select,

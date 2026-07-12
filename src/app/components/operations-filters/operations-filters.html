@@ -1,0 +1,59 @@
+<div class="operations-filters">
+  @if (showReset()) {
+    <button
+      type="button"
+      class="operations-filters__reset"
+      (click)="resetFilters()"
+    >
+      Сбросить фильтры
+    </button>
+  }
+
+  <div class="operations-filter">
+    <span class="operations-filter__label">Type</span>
+    <div class="operations-filter__chips">
+      @for (filter of typeFilters(); track filter.value) {
+        <button
+          type="button"
+          class="operations-filter__chip"
+          [class.operations-filter__chip--active]="selectedType() === filter.value"
+          (click)="selectType(filter.value)"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="operations-filter">
+    <span class="operations-filter__label">Account</span>
+    <div class="operations-filter__chips">
+      @for (filter of accountFilters(); track filter.value) {
+        <button
+          type="button"
+          class="operations-filter__chip"
+          [class.operations-filter__chip--active]="selectedAccount() === filter.value"
+          (click)="selectAccount(filter.value)"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="operations-filter">
+    <span class="operations-filter__label">Time Period</span>
+    <div class="operations-filter__chips">
+      @for (filter of periodFilters(); track filter.value) {
+        <button
+          type="button"
+          class="operations-filter__chip"
+          [class.operations-filter__chip--active]="selectedPeriod() === filter.value"
+          (click)="selectPeriod(filter.value)"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

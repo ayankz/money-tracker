@@ -1,5 +1,65 @@
 <app-header [title]="'Операции'" [showBackButton]="true" />
 
 <div class="content">
-  <p>operations works!</p>
+  <app-operations-filters
+    [selectedType]="selectedTypeFilter()"
+    [selectedAccount]="selectedAccountFilter()"
+    [selectedPeriod]="selectedPeriodFilter()"
+    [typeFilters]="typeFilters"
+    [accountFilters]="accountFilters()"
+    [periodFilters]="periodFilters"
+    [showReset]="hasActiveFilters()"
+    (typeSelected)="selectTypeFilter($event)"
+    (accountSelected)="selectAccountFilter($event)"
+    (periodSelected)="selectPeriodFilter($event)"
+    (resetClicked)="resetFilters()"
+  />
+
+  @if (hasOperations()) {
+  <div class="operations-groups">
+    @for (group of groupedOperations(); track group.label) {
+    <section class="operations-group">
+      <h3 class="operations-group__title">{{ group.label }}</h3>
+
+      <div class="operations-group__list">
+        @for (operation of group.items; track operation.id) {
+        <article class="operation-card">
+          <div class="operation-card__content">
+            <div
+              class="operation-card__icon"
+              [style.background-color]="operation.backgroundColor"
+              aria-hidden="true"
+            >
+              <svg
+                class="operation-card__icon-svg"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                [attr.fill]="operation.iconColor"
+              >
+                <path [attr.d]="operation.iconPath" />
+              </svg>
+            </div>
+
+            <div class="operation-card__details">
+              <h4 class="operation-card__title">{{ operation.title }}</h4>
+              <p class="operation-card__subtitle">{{ operation.subtitle }}</p>
+            </div>
+          </div>
+
+          <span class="operation-card__amount"
+            [class.operation-card__amount--income]="operation.amountClass === 'income'">
+            {{ operation.amountLabel }}
+          </span>
+        </article>
+        }
+      </div>
+    </section>
+    }
+  </div>
+  } @else {
+  <div class="operations-empty">
+    <p class="operations-empty__title">Операций пока нет</p>
+    <p class="operations-empty__subtitle">Создайте первую операцию, и она появится здесь.</p>
+  </div>
+  }
 </div>

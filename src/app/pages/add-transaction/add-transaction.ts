@@ -93,6 +93,16 @@ export class AddTransaction {
     const category = this.filteredCategories().find((item) => item.id === selectedId);
     return category?.name ?? 'Без категории';
   });
+  protected readonly selectedCurrencyLabel = computed(() => {
+    const selectedId = this.selectedAccountId();
+
+    if (!selectedId) {
+      return '';
+    }
+
+    const account = this.accounts().find((item) => String(item.id) === selectedId);
+    return account?.currency ?? '';
+  });
 
   constructor() {
     if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
