@@ -30,6 +30,7 @@ interface OperationsState {
   readonly operations: ReadonlyArray<Operation>;
   readonly selectedOperation: Operation | null;
   readonly isLoading: boolean;
+  readonly hasLoaded: boolean;
   readonly error: string | null;
 }
 
@@ -37,6 +38,7 @@ const initialState: OperationsState = {
   operations: [],
   selectedOperation: null,
   isLoading: false,
+  hasLoaded: false,
   error: null,
 };
 
@@ -81,10 +83,11 @@ export const OperationsStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
             http.get<Operation[]>(API_URL).pipe(
-              tap((operations) => patchState(store, { operations, isLoading: false })),
+              tap((operations) => patchState(store, { operations, isLoading: false, hasLoaded: true })),
               catchError((error) => {
                 patchState(store, {
                   isLoading: false,
+                  hasLoaded: true,
                   error: error.message || 'Failed to load operations',
                 });
                 return of([]);
@@ -121,6 +124,7 @@ export const OperationsStore = signalStore(
                 patchState(store, {
                   operations: [...store.operations(), newOperation],
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 notifications.success();
               }),

@@ -26,6 +26,7 @@ interface TransfersState {
   readonly transfers: ReadonlyArray<Transfer>;
   readonly selectedTransfer: Transfer | null;
   readonly isLoading: boolean;
+  readonly hasLoaded: boolean;
   readonly error: string | null;
 }
 
@@ -33,6 +34,7 @@ const initialState: TransfersState = {
   transfers: [],
   selectedTransfer: null,
   isLoading: false,
+  hasLoaded: false,
   error: null,
 };
 
@@ -55,10 +57,11 @@ export const TransfersStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
             http.get<Transfer[]>(API_URL).pipe(
-              tap((transfers) => patchState(store, { transfers, isLoading: false })),
+              tap((transfers) => patchState(store, { transfers, isLoading: false, hasLoaded: true })),
               catchError((error) => {
                 patchState(store, {
                   isLoading: false,
+                  hasLoaded: true,
                   error: error.message || 'Failed to load transfers',
                 });
                 return of([]);
@@ -77,6 +80,7 @@ export const TransfersStore = signalStore(
                 patchState(store, {
                   transfers: [...store.transfers(), newTransfer],
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 notifications.success();
               }),

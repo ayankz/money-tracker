@@ -14,6 +14,7 @@ export class OperationsService {
 
   readonly operations = this.store.operations;
   readonly isLoading = this.store.isLoading;
+  readonly hasLoaded = this.store.hasLoaded;
   readonly error = this.store.error;
   readonly selectedOperation = this.store.selectedOperation;
   readonly operationsCount = this.store.operationsCount;

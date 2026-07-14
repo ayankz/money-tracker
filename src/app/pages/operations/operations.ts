@@ -81,7 +81,9 @@ export class Operations {
   );
 
   constructor() {
-    this.operationsService.loadOperations();
+    if (!this.operationsService.hasLoaded() && !this.operationsService.isLoading()) {
+      this.operationsService.loadOperations();
+    }
 
     if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
       this.accountsService.loadAccounts();

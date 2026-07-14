@@ -10,6 +10,7 @@ export class TransfersService {
   readonly transfers = this.store.transfers;
   readonly selectedTransfer = this.store.selectedTransfer;
   readonly isLoading = this.store.isLoading;
+  readonly hasLoaded = this.store.hasLoaded;
   readonly error = this.store.error;
   readonly transfersCount = this.store.transfersCount;
   readonly hasTransfers = this.store.hasTransfers;
