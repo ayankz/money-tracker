@@ -98,6 +98,25 @@
   cursor: not-allowed;
 }
 
+.entity-input-with-suffix {
+  position: relative;
+}
+
+.entity-input--with-suffix {
+  padding-right: 76px;
+}
+
+.entity-input__suffix {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
 .entity-select,
 .entity-textarea {
   width: 100%;

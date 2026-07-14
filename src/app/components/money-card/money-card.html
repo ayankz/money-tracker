@@ -40,7 +40,7 @@
 
   <div class="bank-card__middle">
     <small class="bank-card__balance-label">Balance</small>
-    <p class="bank-card__balance-amount">${{ card().balance | number:'1.2-2' }}</p>
+    <p class="bank-card__balance-amount">{{ card().currency || 'KZT' }} {{ card().balance | number:'1.2-2' }}</p>
   </div>
 
   @if (card().showDigits !== false) {

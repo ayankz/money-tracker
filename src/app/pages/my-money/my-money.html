@@ -8,7 +8,9 @@
       [layout]="'stack'"
       [showAddAccountTile]="false"
       [showDelete]="true"
+      [transferLabel]="'Transfer'"
       (action)="openAddAccount()"
+      (transfer)="openTransfer()"
       (removeAccount)="removeAccount($event)"
     />
   </section>

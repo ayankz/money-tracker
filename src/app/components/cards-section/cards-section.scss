@@ -13,6 +13,12 @@
   margin: 0;
 }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .secondary-button {
   padding: 8px 14px;
   border: 1px solid var(--profile-primary-border-strong);

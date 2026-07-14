@@ -5,7 +5,8 @@
     [weeklySpending]="weeklySpending()" [monthlySpending]="monthlySpending()" />
 
   <app-accounts-section [accounts]="accounts()" [accountsClickable]="true" (action)="openMyMoney()"
-    (addAccount)="openAddAccount()" (removeAccount)="removeAccount($event)" (accountClick)="openMyMoney()" />
+    (transfer)="openTransfer()" (addAccount)="openAddAccount()" (removeAccount)="removeAccount($event)"
+    (accountClick)="openMyMoney()" />
 
   <app-upcoming-payments-section [payments]="upcomingPayments()" (paymentClick)="onPaymentClick($event)" />
 

@@ -1,0 +1,207 @@
+<app-header title="Создать перевод" />
+
+<app-entity-form-shell [formGroup]="transferForm" ariaLabel="Форма создания перевода" (submitted)="onSubmit()">
+  <div entityFormContent class="entity-form-stack">
+    <section class="transfer-account-section">
+      <h3 class="transfer-account-section__title">
+        From
+        <span class="required">*</span>
+      </h3>
+
+      @if (accounts().length) {
+        <div class="transfer-accounts" role="radiogroup" aria-label="Аккаунт списания">
+          @for (account of accounts(); track account.id) {
+            <button
+              type="button"
+              class="transfer-account-card"
+              [class.transfer-account-card--selected]="selectedFromAccountId() === account.id"
+              [disabled]="isSubmitting()"
+              role="radio"
+              [attr.aria-checked]="selectedFromAccountId() === account.id"
+              (click)="selectFromAccount(account.id)"
+            >
+              <div class="transfer-account-card__header">
+                <p class="transfer-account-card__title">{{ getAccountTitle(account) }}</p>
+                <span class="transfer-account-card__type">{{ getAccountTypeLabel(account) }}</span>
+              </div>
+
+              <div class="transfer-account-card__middle">
+                <small class="transfer-account-card__balance-label">Balance</small>
+                <p class="transfer-account-card__balance">{{ formatAccountBalance(account) }}</p>
+              </div>
+
+              @if (account.type === 'CARD' && account.digits) {
+                <div class="transfer-account-card__bottom">
+                  <p class="transfer-account-card__number">•••• •••• •••• {{ account.digits }}</p>
+                </div>
+              } @else {
+                <div class="transfer-account-card__bottom">
+                  <p class="transfer-account-card__number">Cash wallet</p>
+                </div>
+              }
+            </button>
+          }
+        </div>
+      } @else {
+        <p class="transfer-account-section__empty">Нет доступных аккаунтов</p>
+      }
+
+      @if (hasError('fromAccountId')) {
+        <span class="entity-error" role="alert">
+          Выберите аккаунт списания
+        </span>
+      }
+    </section>
+
+    <div class="entity-field">
+      <label class="entity-label" for="withdraw-amount">
+        Сумма списания
+        <span class="required">*</span>
+      </label>
+      <div class="entity-input-with-suffix">
+        <input
+          id="withdraw-amount"
+          type="text"
+          class="entity-input entity-input--with-suffix"
+          [class.error]="hasError('withdrawAmount')"
+          placeholder="например, 12500"
+          [formControl]="withdrawAmountControl"
+          inputmode="decimal"
+          (keydown)="blockNegativeAmountInput($event)"
+          [attr.aria-invalid]="hasError('withdrawAmount')"
+          [attr.aria-describedby]="hasError('withdrawAmount') ? 'withdraw-amount-error' : null"
+        />
+        @if (fromCurrency()) {
+          <span class="entity-input__suffix">{{ fromCurrency() }}</span>
+        }
+      </div>
+      @if (hasError('withdrawAmount')) {
+        <span id="withdraw-amount-error" class="entity-error" role="alert">
+          {{ getErrorMessage('withdrawAmount') }}
+        </span>
+      }
+    </div>
+
+    <section class="transfer-account-section">
+      <h3 class="transfer-account-section__title">
+        To
+        <span class="required">*</span>
+      </h3>
+
+      @if (accounts().length) {
+        <div class="transfer-accounts" role="radiogroup" aria-label="Аккаунт зачисления">
+          @for (account of accounts(); track account.id) {
+            <button
+              type="button"
+              class="transfer-account-card"
+              [class.transfer-account-card--selected]="selectedToAccountId() === account.id"
+              [disabled]="isToAccountDisabled(account.id)"
+              role="radio"
+              [attr.aria-checked]="selectedToAccountId() === account.id"
+              (click)="selectToAccount(account.id)"
+            >
+              <div class="transfer-account-card__header">
+                <p class="transfer-account-card__title">{{ getAccountTitle(account) }}</p>
+                <span class="transfer-account-card__type">{{ getAccountTypeLabel(account) }}</span>
+              </div>
+
+              <div class="transfer-account-card__middle">
+                <small class="transfer-account-card__balance-label">Balance</small>
+                <p class="transfer-account-card__balance">{{ formatAccountBalance(account) }}</p>
+              </div>
+
+              @if (account.type === 'CARD' && account.digits) {
+                <div class="transfer-account-card__bottom">
+                  <p class="transfer-account-card__number">•••• •••• •••• {{ account.digits }}</p>
+                </div>
+              } @else {
+                <div class="transfer-account-card__bottom">
+                  <p class="transfer-account-card__number">Cash wallet</p>
+                </div>
+              }
+            </button>
+          }
+        </div>
+      } @else {
+        <p class="transfer-account-section__empty">Нет доступных аккаунтов</p>
+      }
+
+      @if (hasError('toAccountId')) {
+        <span class="entity-error" role="alert">
+          Выберите аккаунт зачисления
+        </span>
+      }
+    </section>
+
+    <div class="entity-field">
+      <label class="entity-label" for="deposit-amount">
+        Сумма зачисления
+        <span class="required">*</span>
+      </label>
+      <div class="entity-input-with-suffix">
+        <input
+          id="deposit-amount"
+          type="text"
+          class="entity-input entity-input--with-suffix"
+          [class.error]="hasError('depositAmount')"
+          placeholder="например, 12500"
+          [formControl]="depositAmountControl"
+          inputmode="decimal"
+          (keydown)="blockNegativeAmountInput($event)"
+          [attr.aria-invalid]="hasError('depositAmount')"
+          [attr.aria-describedby]="hasError('depositAmount') ? 'deposit-amount-error' : null"
+        />
+        @if (toCurrency()) {
+          <span class="entity-input__suffix">{{ toCurrency() }}</span>
+        }
+      </div>
+      @if (hasError('depositAmount')) {
+        <span id="deposit-amount-error" class="entity-error" role="alert">
+          {{ getErrorMessage('depositAmount') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="transfer-comment">Комментарий</label>
+      <textarea
+        id="transfer-comment"
+        class="entity-textarea"
+        [class.error]="hasError('comment')"
+        placeholder="например, Перевод между счетами"
+        [formControl]="commentControl"
+        [attr.aria-invalid]="hasError('comment')"
+        [attr.aria-describedby]="hasError('comment') ? 'transfer-comment-error' : null"
+      ></textarea>
+      @if (hasError('comment')) {
+        <span id="transfer-comment-error" class="entity-error" role="alert">
+          {{ getErrorMessage('comment') }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div entityFormActions>
+    <button
+      type="submit"
+      class="entity-btn entity-btn--primary"
+      [disabled]="transferForm.invalid || isSubmitting()"
+      [attr.aria-busy]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        <span class="entity-spinner" aria-hidden="true"></span>
+        <span>Создание...</span>
+      } @else {
+        <span>Создать перевод</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="entity-btn entity-btn--secondary"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+    >
+      Отмена
+    </button>
+  </div>
+</app-entity-form-shell>

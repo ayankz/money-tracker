@@ -111,7 +111,7 @@ export class AddAccount {
           .replace(/(\..*)\./g, '$1');
 
         const [whole = '', fraction = ''] = sanitized.split('.');
-        const normalized = fraction ? `${whole}.${fraction.substring(0, 2)}` : whole;
+        const normalized = sanitized.includes('.') ? `${whole}.${fraction.substring(0, 2)}` : whole;
 
         if (normalized !== value) {
           balanceControl.patchValue(normalized, { emitEvent: false });

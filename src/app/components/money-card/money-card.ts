@@ -7,6 +7,7 @@ export interface MoneyCard {
   digits: string;
   showDigits?: boolean;
   typeLabel?: string;
+  currency?: string;
   color: string;
   balance: number;
 }

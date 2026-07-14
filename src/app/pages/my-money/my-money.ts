@@ -23,6 +23,7 @@ export class MyMoney {
       digits: account.digits,
       showDigits: account.type === 'CARD',
       typeLabel: account.type === 'CARD' ? 'Карта' : 'Наличка',
+      currency: account.currency,
       balance: Number(account.balance),
       color: 'var(--profile-card-gradient)',
     }))
@@ -36,6 +37,10 @@ export class MyMoney {
 
   protected openAddAccount(): void {
     void this.router.navigate([{ outlets: { sheet: ['add-account'] } }], { replaceUrl: true });
+  }
+
+  protected openTransfer(): void {
+    void this.router.navigate([{ outlets: { sheet: ['create-transfer'] } }], { replaceUrl: true });
   }
 
   protected removeAccount(accountId: number): void {

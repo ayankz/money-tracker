@@ -31,17 +31,22 @@
         Сумма
         <span class="required">*</span>
       </label>
-      <input
-        id="operation-amount"
-        type="text"
-        class="entity-input"
-        [class.error]="hasError('amount')"
-        placeholder="например, 1250"
-        inputmode="decimal"
-        [formControl]="amountControl"
-        [attr.aria-invalid]="hasError('amount')"
-        [attr.aria-describedby]="hasError('amount') ? 'operation-amount-error' : null"
-      />
+      <div class="entity-input-with-suffix">
+        <input
+          id="operation-amount"
+          type="text"
+          class="entity-input entity-input--with-suffix"
+          [class.error]="hasError('amount')"
+          placeholder="например, 1250"
+          inputmode="decimal"
+          [formControl]="amountControl"
+          [attr.aria-invalid]="hasError('amount')"
+          [attr.aria-describedby]="hasError('amount') ? 'operation-amount-error' : null"
+        />
+        @if (selectedAccountCurrency()) {
+          <span class="entity-input__suffix">{{ selectedAccountCurrency() }}</span>
+        }
+      </div>
       @if (hasError('amount')) {
         <span id="operation-amount-error" class="entity-error" role="alert">
           {{ getErrorMessage('amount') }}
