@@ -125,17 +125,20 @@
           Баланс аккаунта
           <span class="required">*</span>
         </label>
-        <input
-          type="text"
-          id="balance"
-          class="entity-input"
-          [class.error]="hasError('balance')"
-          placeholder="например, 12500"
-          [formControl]="balanceControl"
-          inputmode="decimal"
-          [attr.aria-invalid]="hasError('balance')"
-          [attr.aria-describedby]="hasError('balance') ? 'balance-error' : null"
-        />
+        <div class="entity-input-with-suffix">
+          <input
+            type="text"
+            id="balance"
+            class="entity-input entity-input--with-suffix"
+            [class.error]="hasError('balance')"
+            placeholder="например, 12500"
+            [formControl]="balanceControl"
+            inputmode="decimal"
+            [attr.aria-invalid]="hasError('balance')"
+            [attr.aria-describedby]="hasError('balance') ? 'balance-error' : null"
+          />
+          <span class="entity-input__suffix">{{ selectedCurrency() }}</span>
+        </div>
         @if (hasError('balance')) {
           <span id="balance-error" class="entity-error" role="alert">
             {{ getErrorMessage('balance') }}

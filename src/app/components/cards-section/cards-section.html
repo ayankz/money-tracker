@@ -1,7 +1,12 @@
 <section class="cards-section">
   <div class="section-heading">
     <h3 class="section-title">{{ title() }}</h3>
-    <button class="secondary-button" type="button" (click)="onAction()">{{ actionLabel() }}</button>
+    <div class="section-actions">
+      @if (accounts().length >= 2) {
+        <button class="secondary-button" type="button" (click)="onTransfer()">{{ transferLabel() }}</button>
+      }
+      <button class="secondary-button" type="button" (click)="onAction()">{{ actionLabel() }}</button>
+    </div>
   </div>
 
   <div class="cards-list" [class.cards-list--stack]="layout() === 'stack'">

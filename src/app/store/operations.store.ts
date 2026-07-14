@@ -14,6 +14,8 @@ export interface Operation {
   readonly categoryId?: number;
   readonly comment?: string;
   readonly accountId?: number;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
 }
 
 export interface CreateOperationDto {

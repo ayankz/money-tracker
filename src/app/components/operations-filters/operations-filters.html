@@ -1,0 +1,65 @@
+<div class="operations-filters">
+  <div class="operations-filters__header">
+    <span class="operations-filters__eyebrow">Фильтры</span>
+    <button class="operations-filters__reset" type="button" (click)="resetFilters.emit()">
+      Сбросить
+    </button>
+  </div>
+
+  <div class="operations-filter-group">
+    <span class="operations-filter-group__label">Тип</span>
+    <div class="operations-filter-group__chips">
+      @for (option of typeOptions; track option.value) {
+        <button
+          type="button"
+          class="operations-filter-chip"
+          [class.operations-filter-chip--active]="selectedType() === option.value"
+          (click)="typeChange.emit(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="operations-filter-group">
+    <span class="operations-filter-group__label">Аккаунт</span>
+    <div class="operations-filter-group__chips">
+      <button
+        type="button"
+        class="operations-filter-chip"
+        [class.operations-filter-chip--active]="selectedAccountId() === 'ALL'"
+        (click)="accountChange.emit('ALL')"
+      >
+        Все аккаунты
+      </button>
+
+      @for (account of accounts(); track account.id) {
+        <button
+          type="button"
+          class="operations-filter-chip"
+          [class.operations-filter-chip--active]="selectedAccountId() === account.id.toString()"
+          (click)="accountChange.emit(account.id.toString())"
+        >
+          {{ getAccountLabel(account) }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="operations-filter-group">
+    <span class="operations-filter-group__label">Период</span>
+    <div class="operations-filter-group__chips">
+      @for (option of periodOptions; track option.value) {
+        <button
+          type="button"
+          class="operations-filter-chip"
+          [class.operations-filter-chip--active]="selectedPeriod() === option.value"
+          (click)="periodChange.emit(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

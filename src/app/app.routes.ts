@@ -86,6 +86,19 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'create-transfer',
+    outlet: 'sheet',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/bottom-sheet-layout/bottom-sheet-layout').then(m => m.BottomSheetLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/create-transfer/create-transfer').then(m => m.CreateTransfer)
+      }
+    ]
+  },
   // Public routes (no auth required)
   {
     path: 'auth',

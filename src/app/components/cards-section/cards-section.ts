@@ -12,18 +12,24 @@ export class AccountsSection {
   readonly accounts = input.required<ReadonlyArray<MoneyCard>>();
   readonly title = input<string>('Your accounts');
   readonly actionLabel = input<string>('Manage');
+  readonly transferLabel = input<string>('Transfer');
   readonly layout = input<'row' | 'stack'>('row');
   readonly showAddAccountTile = input<boolean>(true);
   readonly accountsClickable = input<boolean>(false);
   readonly showDelete = input<boolean>(false);
 
   readonly action = output<void>();
+  readonly transfer = output<void>();
   readonly addAccount = output<void>();
   readonly removeAccount = output<number>();
   readonly accountClick = output<number>();
 
   protected onAction(): void {
     this.action.emit();
+  }
+
+  protected onTransfer(): void {
+    this.transfer.emit();
   }
 
   protected onAddAccount(): void {

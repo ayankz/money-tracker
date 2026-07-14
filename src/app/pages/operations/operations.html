@@ -1,5 +1,90 @@
 <app-header [title]="'Операции'" [showBackButton]="true" />
 
-<div class="content">
-  <p>operations works!</p>
-</div>
+<main class="operations-page">
+  <section class="operations-toolbar" aria-label="Поиск и фильтры операций">
+    <label class="operations-search" for="operations-search">
+      <span class="operations-search__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M9.5 3C5.91 3 3 5.91 3 9.5S5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5v-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5C16 5.91 13.09 3 9.5 3Zm0 2C11.99 5 14 7.01 14 9.5S11.99 14 9.5 14 5 11.99 5 9.5 7.01 5 9.5 5Z" />
+        </svg>
+      </span>
+      <input
+        id="operations-search"
+        class="operations-search__input"
+        type="text"
+        placeholder="Поиск операций"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="updateSearchQuery($event)"
+      />
+    </label>
+
+    <button
+      class="operations-filter-toggle"
+      type="button"
+      [class.operations-filter-toggle--active]="showFilters() || hasActiveFilters()"
+      [attr.aria-expanded]="showFilters()"
+      aria-label="Показать фильтры"
+      (click)="toggleFilters()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 7h10a3 3 0 1 0 0-2H4v2Zm13-1a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM4 19h10a3 3 0 1 0 0-2H4v2Zm13-1a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM4 13h3a3 3 0 1 0 0-2H4v2Zm6-1a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+      </svg>
+    </button>
+  </section>
+
+  @if (showFilters()) {
+    <app-operations-filters
+      [accounts]="accounts()"
+      [selectedType]="selectedType()"
+      [selectedAccountId]="selectedAccountId()"
+      [selectedPeriod]="selectedPeriod()"
+      (typeChange)="updateTypeFilter($event)"
+      (accountChange)="updateAccountFilter($event)"
+      (periodChange)="updatePeriodFilter($event)"
+      (resetFilters)="resetFilters()"
+    />
+  }
+
+  @if (isLoading()) {
+    <div class="operations-state">Загружаем операции...</div>
+  } @else if (operationGroups().length) {
+    <div class="operations-list">
+      @for (group of operationGroups(); track group.label) {
+        <section class="operation-group">
+          <h3 class="operation-group__title">{{ group.label }}</h3>
+
+          <div class="operation-group__card">
+            @for (operation of group.items; track operation.id) {
+              <article class="operation-card">
+                <div class="operation-card__content">
+                  <div
+                    class="operation-card__icon"
+                    [class.operation-card__icon--income]="operation.type === 'INCOME'"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M12 3C7.03 3 3 5.24 3 8v8c0 2.76 4.03 5 9 5s9-2.24 9-5V8c0-2.76-4.03-5-9-5Zm0 2c4.08 0 7 1.58 7 3s-2.92 3-7 3-7-1.58-7-3 2.92-3 7-3Zm0 14c-4.08 0-7-1.58-7-3v-1.08C6.63 16.18 9.15 17 12 17s5.37-.82 7-2.08V16c0 1.42-2.92 3-7 3Zm0-4c-4.08 0-7-1.58-7-3v-1.08C6.63 12.18 9.15 13 12 13s5.37-.82 7-2.08V12c0 1.42-2.92 3-7 3Z" />
+                    </svg>
+                  </div>
+
+                  <div class="operation-card__text">
+                    <h4 class="operation-card__title">{{ operation.title }}</h4>
+                    <p class="operation-card__subtitle">{{ operation.subtitle }}</p>
+                  </div>
+                </div>
+
+                <span class="operation-card__amount" [class.operation-card__amount--income]="operation.amountClass === 'income'">
+                  {{ operation.amountLabel }}
+                </span>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  } @else {
+    <div class="operations-state">
+      {{ hasActiveFilters() ? 'По выбранным фильтрам операций нет' : 'Операций пока нет' }}
+    </div>
+  }
+</main>

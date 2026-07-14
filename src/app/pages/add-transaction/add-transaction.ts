@@ -83,6 +83,15 @@ export class AddTransaction {
     const account = this.accounts().find((item) => String(item.id) === selectedId);
     return account ? this.getAccountLabel(account) : 'Без аккаунта';
   });
+  protected readonly selectedAccountCurrency = computed(() => {
+    const selectedId = this.selectedAccountId();
+
+    if (!selectedId) {
+      return '';
+    }
+
+    return this.accounts().find((item) => String(item.id) === selectedId)?.currency ?? '';
+  });
   protected readonly selectedCategoryLabel = computed(() => {
     const selectedId = this.selectedCategoryId();
 
@@ -112,7 +121,7 @@ export class AddTransaction {
           .replace(/(\..*)\./g, '$1');
 
         const [whole = '', fraction = ''] = sanitized.split('.');
-        const normalized = fraction ? `${whole}.${fraction.substring(0, 2)}` : whole;
+        const normalized = sanitized.includes('.') ? `${whole}.${fraction.substring(0, 2)}` : whole;
 
         if (normalized !== value) {
           this.amountControl.patchValue(normalized, { emitEvent: false });
