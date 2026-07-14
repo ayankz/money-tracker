@@ -45,16 +45,17 @@ export class Operations {
   private readonly categoryService = inject(CategoryService);
   protected readonly selectedTypeFilter = signal<ActivityTypeFilter>('ALL');
   protected readonly selectedAccountFilter = signal<string>('ALL');
-  protected readonly selectedPeriodFilter = signal<ActivityPeriodFilter>('THIS_MONTH');
+  protected readonly selectedPeriodFilter = signal<ActivityPeriodFilter>('ALL_TIME');
+  protected readonly searchQuery = signal('');
   protected readonly typeFilters = [
     { value: 'ALL', label: 'All' },
     { value: 'INCOME', label: 'Income' },
     { value: 'EXPENSE', label: 'Expenses' },
   ] as const;
   protected readonly periodFilters = [
+    { value: 'ALL_TIME', label: 'All time' },
     { value: 'THIS_MONTH', label: 'This Month' },
     { value: 'LAST_7_DAYS', label: 'Last 7 days' },
-    { value: 'ALL_TIME', label: 'All time' },
   ] as const;
   protected readonly accountFilters = computed<ReadonlyArray<{ value: string; label: string }>>(() => [
     { value: 'ALL', label: 'All Accounts' },
@@ -69,6 +70,7 @@ export class Operations {
       .filter((operation) => this.matchesAccountFilter(operation))
       .filter((operation) => this.matchesPeriodFilter(operation))
       .map((operation) => this.toViewModel(operation))
+      .filter((operation) => this.matchesSearchQuery(operation))
   );
 
   protected readonly groupedOperations = computed(() => {
@@ -90,7 +92,8 @@ export class Operations {
   protected readonly hasActiveFilters = computed(() =>
     this.selectedTypeFilter() !== 'ALL'
     || this.selectedAccountFilter() !== 'ALL'
-    || this.selectedPeriodFilter() !== 'THIS_MONTH'
+    || this.selectedPeriodFilter() !== 'ALL_TIME'
+    || this.searchQuery().trim().length > 0
   );
 
   constructor() {
@@ -157,7 +160,12 @@ export class Operations {
   protected resetFilters(): void {
     this.selectedTypeFilter.set('ALL');
     this.selectedAccountFilter.set('ALL');
-    this.selectedPeriodFilter.set('THIS_MONTH');
+    this.selectedPeriodFilter.set('ALL_TIME');
+    this.searchQuery.set('');
+  }
+
+  protected updateSearchQuery(value: string): void {
+    this.searchQuery.set(value);
   }
 
   private getGroupLabel(date: Date | null): string {
@@ -251,5 +259,20 @@ export class Operations {
     last7Days.setHours(0, 0, 0, 0);
 
     return date >= last7Days;
+  }
+
+  private matchesSearchQuery(operation: OperationViewModel): boolean {
+    const query = this.searchQuery().trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    return [
+      operation.title,
+      operation.subtitle,
+      operation.amountLabel,
+      operation.groupLabel,
+    ].some((value) => value.toLowerCase().includes(query));
   }
 }

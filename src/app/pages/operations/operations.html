@@ -9,9 +9,11 @@
     [accountFilters]="accountFilters()"
     [periodFilters]="periodFilters"
     [showReset]="hasActiveFilters()"
+    [searchValue]="searchQuery()"
     (typeSelected)="selectTypeFilter($event)"
     (accountSelected)="selectAccountFilter($event)"
     (periodSelected)="selectPeriodFilter($event)"
+    (searchChanged)="updateSearchQuery($event)"
     (resetClicked)="resetFilters()"
   />
 

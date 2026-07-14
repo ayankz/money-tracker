@@ -5,6 +5,47 @@
   margin-bottom: 28px;
 }
 
+.operations-filters__toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px;
+  gap: 12px;
+  align-items: center;
+}
+
+.operations-filters__search {
+  min-width: 0;
+}
+
+.operations-filters__toggle {
+  width: 56px;
+  height: 56px;
+  border: 2px solid rgba(217, 142, 115, 0.2);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.operations-filters__toggle:hover,
+.operations-filters__toggle--active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.operations-filters__toggle:active {
+  transform: scale(0.96);
+}
+
+.operations-filters__toggle-icon {
+  width: 22px;
+  height: 22px;
+}
+
 .operations-filters__reset {
   align-self: flex-start;
   min-height: 38px;

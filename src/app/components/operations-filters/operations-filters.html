@@ -1,4 +1,34 @@
 <div class="operations-filters">
+  <div class="operations-filters__toolbar">
+    <input
+      class="entity-input operations-filters__search"
+      type="search"
+      placeholder="Поиск операций"
+      [value]="searchValue()"
+      (input)="onSearchInput($event)"
+      aria-label="Поиск операций"
+    />
+
+    <button
+      type="button"
+      class="operations-filters__toggle"
+      [class.operations-filters__toggle--active]="filtersExpanded()"
+      [attr.aria-expanded]="filtersExpanded()"
+      aria-label="Показать или скрыть фильтры"
+      (click)="toggleFilters()"
+    >
+      <svg
+        class="operations-filters__toggle-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" />
+      </svg>
+    </button>
+  </div>
+
   @if (showReset()) {
     <button
       type="button"
@@ -9,51 +39,53 @@
     </button>
   }
 
-  <div class="operations-filter">
-    <span class="operations-filter__label">Type</span>
-    <div class="operations-filter__chips">
-      @for (filter of typeFilters(); track filter.value) {
-        <button
-          type="button"
-          class="operations-filter__chip"
-          [class.operations-filter__chip--active]="selectedType() === filter.value"
-          (click)="selectType(filter.value)"
-        >
-          {{ filter.label }}
-        </button>
-      }
+  @if (filtersExpanded()) {
+    <div class="operations-filter">
+      <span class="operations-filter__label">Type</span>
+      <div class="operations-filter__chips">
+        @for (filter of typeFilters(); track filter.value) {
+          <button
+            type="button"
+            class="operations-filter__chip"
+            [class.operations-filter__chip--active]="selectedType() === filter.value"
+            (click)="selectType(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
     </div>
-  </div>
 
-  <div class="operations-filter">
-    <span class="operations-filter__label">Account</span>
-    <div class="operations-filter__chips">
-      @for (filter of accountFilters(); track filter.value) {
-        <button
-          type="button"
-          class="operations-filter__chip"
-          [class.operations-filter__chip--active]="selectedAccount() === filter.value"
-          (click)="selectAccount(filter.value)"
-        >
-          {{ filter.label }}
-        </button>
-      }
+    <div class="operations-filter">
+      <span class="operations-filter__label">Account</span>
+      <div class="operations-filter__chips">
+        @for (filter of accountFilters(); track filter.value) {
+          <button
+            type="button"
+            class="operations-filter__chip"
+            [class.operations-filter__chip--active]="selectedAccount() === filter.value"
+            (click)="selectAccount(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
     </div>
-  </div>
 
-  <div class="operations-filter">
-    <span class="operations-filter__label">Time Period</span>
-    <div class="operations-filter__chips">
-      @for (filter of periodFilters(); track filter.value) {
-        <button
-          type="button"
-          class="operations-filter__chip"
-          [class.operations-filter__chip--active]="selectedPeriod() === filter.value"
-          (click)="selectPeriod(filter.value)"
-        >
-          {{ filter.label }}
-        </button>
-      }
+    <div class="operations-filter">
+      <span class="operations-filter__label">Time Period</span>
+      <div class="operations-filter__chips">
+        @for (filter of periodFilters(); track filter.value) {
+          <button
+            type="button"
+            class="operations-filter__chip"
+            [class.operations-filter__chip--active]="selectedPeriod() === filter.value"
+            (click)="selectPeriod(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
     </div>
-  </div>
+  }
 </div>
