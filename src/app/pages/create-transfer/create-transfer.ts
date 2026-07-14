@@ -40,6 +40,7 @@ export class CreateTransfer {
   private readonly accountsService = inject(AccountsService);
   private readonly transfersService = inject(TransfersService);
   private submittedTransfersCount: number | null = null;
+  private isSyncingEqualCurrencyAmounts = false;
 
   protected readonly isSubmitting = signal(false);
   protected readonly selectedFromAccountId = signal<number | null>(null);
@@ -75,7 +76,10 @@ export class CreateTransfer {
 
     this.withdrawAmountControl.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe((value) => this.normalizeAmount(this.withdrawAmountControl, value));
+      .subscribe((value) => {
+        this.normalizeAmount(this.withdrawAmountControl, value);
+        this.syncDepositAmountForEqualCurrencies(this.withdrawAmountControl.value);
+      });
 
     this.depositAmountControl.valueChanges
       .pipe(takeUntilDestroyed())
@@ -107,6 +111,7 @@ export class CreateTransfer {
       this.accounts();
       this.selectedFromAccountId();
       this.withdrawAmountControl.updateValueAndValidity({ emitEvent: false });
+      this.syncDepositAmountForEqualCurrencies(this.withdrawAmountControl.value);
     });
 
     effect(() => {
@@ -241,6 +246,7 @@ export class CreateTransfer {
     this.selectedToAccountId.set(accountId);
     this.toAccountIdControl.setValue(accountId);
     this.toAccountIdControl.markAsTouched();
+    this.syncDepositAmountForEqualCurrencies(this.withdrawAmountControl.value);
   }
 
   protected isToAccountDisabled(accountId: number): boolean {
@@ -284,6 +290,18 @@ export class CreateTransfer {
     if (normalized !== value) {
       control.patchValue(normalized, { emitEvent: false });
     }
+  }
+
+  private syncDepositAmountForEqualCurrencies(value: string): void {
+    if (this.isSyncingEqualCurrencyAmounts || this.fromCurrency() !== this.toCurrency()) {
+      return;
+    }
+
+    this.isSyncingEqualCurrencyAmounts = true;
+    this.depositAmountControl.patchValue(value, { emitEvent: false });
+    this.depositAmountControl.markAsTouched();
+    this.depositAmountControl.updateValueAndValidity({ emitEvent: false });
+    this.isSyncingEqualCurrencyAmounts = false;
   }
 
   private maxFromBalanceValidator(): ValidatorFn {
