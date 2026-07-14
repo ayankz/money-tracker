@@ -165,6 +165,7 @@ export class AddTransaction {
 
       if (this.operationsService.operationsCount() > this.submittedOperationsCount) {
         this.accountsService.loadAccounts();
+        this.operationsService.loadOverview();
         this.resetForm();
         this.isSubmitting.set(false);
         this.closeSheet();

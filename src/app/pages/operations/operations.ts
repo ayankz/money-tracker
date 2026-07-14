@@ -133,13 +133,27 @@ export class Operations {
 
     return {
       id: String(operation.id),
-      title: operation.comment?.trim() || category?.name || (operation.type === 'INCOME' ? 'Доход' : 'Расход'),
+      title: this.getOperationTitle(operation, category),
       subtitle: subtitleParts.join(' • '),
       amountLabel: this.formatAmount(operation.amount, operation.type, account),
       amountClass: operation.type === 'INCOME' ? 'income' : 'expense',
       groupLabel: this.getGroupLabel(timestamp),
       type: operation.type,
     };
+  }
+
+  private getOperationTitle(operation: Operation, category?: Category): string {
+    const comment = operation.comment?.trim();
+
+    if (comment) {
+      return this.capitalizeFirstLetter(comment);
+    }
+
+    return category?.name || (operation.type === 'INCOME' ? 'Доход' : 'Расход');
+  }
+
+  private capitalizeFirstLetter(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
   private groupOperations(items: ReadonlyArray<OperationListItem>): ReadonlyArray<OperationGroup> {

@@ -1,8 +1,7 @@
 <app-header [showProfile]="true" [userName]="'John'" />
 
 <div class="content">
-  <app-financial-overview [weeklyEarnings]="weeklyEarnings()" [monthlyEarnings]="monthlyEarnings()"
-    [weeklySpending]="weeklySpending()" [monthlySpending]="monthlySpending()" />
+  <app-financial-overview />
 
   <app-accounts-section [accounts]="accounts()" [accountsClickable]="true" (action)="openMyMoney()"
     (transfer)="openTransfer()" (addAccount)="openAddAccount()" (removeAccount)="removeAccount($event)"
