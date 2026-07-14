@@ -20,10 +20,6 @@ export class Home {
   private readonly router = inject(Router);
   private readonly accountsService = inject(AccountsService);
 
-  protected readonly weeklyEarnings = signal<number>(0);
-  protected readonly monthlyEarnings = signal<number>(9800);
-  protected readonly weeklySpending = signal<number>(1120.5);
-  protected readonly monthlySpending = signal<number>(4250);
   protected readonly monthlyBudget = signal<number>(3000);
   protected readonly spent = signal<number>(2250);
   protected readonly accounts = computed<ReadonlyArray<MoneyCard>>(() =>

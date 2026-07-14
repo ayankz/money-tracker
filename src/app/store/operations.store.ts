@@ -26,17 +26,55 @@ export interface CreateOperationDto {
   readonly accountId?: number;
 }
 
+export interface OperationOverviewTotal {
+  readonly currency: string;
+  readonly income: number;
+  readonly expense: number;
+}
+
+export interface OperationOverviewPeriod {
+  readonly from: string;
+  readonly to: string;
+  readonly totals: ReadonlyArray<OperationOverviewTotal>;
+}
+
+export interface OperationOverview {
+  readonly week: OperationOverviewPeriod;
+  readonly month: OperationOverviewPeriod;
+}
+
+export type OperationOverviewRange = OperationOverviewPeriod;
+
+export interface OperationOverviewRangeParams {
+  readonly dateFrom: string;
+  readonly dateTo: string;
+}
+
 interface OperationsState {
   readonly operations: ReadonlyArray<Operation>;
+  readonly overview: OperationOverview | null;
+  readonly overviewRange: OperationOverviewRange | null;
   readonly selectedOperation: Operation | null;
   readonly isLoading: boolean;
+  readonly isOverviewLoading: boolean;
+  readonly isOverviewRangeLoading: boolean;
+  readonly hasLoaded: boolean;
+  readonly hasOverviewLoaded: boolean;
+  readonly hasOverviewRangeLoaded: boolean;
   readonly error: string | null;
 }
 
 const initialState: OperationsState = {
   operations: [],
+  overview: null,
+  overviewRange: null,
   selectedOperation: null,
   isLoading: false,
+  isOverviewLoading: false,
+  isOverviewRangeLoading: false,
+  hasLoaded: false,
+  hasOverviewLoaded: false,
+  hasOverviewRangeLoaded: false,
   error: null,
 };
 
@@ -81,10 +119,11 @@ export const OperationsStore = signalStore(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(() =>
             http.get<Operation[]>(API_URL).pipe(
-              tap((operations) => patchState(store, { operations, isLoading: false })),
+              tap((operations) => patchState(store, { operations, isLoading: false, hasLoaded: true })),
               catchError((error) => {
                 patchState(store, {
                   isLoading: false,
+                  hasLoaded: true,
                   error: error.message || 'Failed to load operations',
                 });
                 return of([]);
@@ -112,6 +151,58 @@ export const OperationsStore = signalStore(
         )
       ),
 
+      loadOverview: rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, { isOverviewLoading: true, error: null })),
+          switchMap(() =>
+            http.get<OperationOverview>(`${API_URL}/overview`).pipe(
+              tap((overview) =>
+                patchState(store, {
+                  overview,
+                  isOverviewLoading: false,
+                  hasOverviewLoaded: true,
+                })
+              ),
+              catchError((error) => {
+                patchState(store, {
+                  isOverviewLoading: false,
+                  hasOverviewLoaded: true,
+                  error: error.message || 'Failed to load operations overview',
+                });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+
+      loadOverviewRange: rxMethod<OperationOverviewRangeParams>(
+        pipe(
+          tap(() => patchState(store, { isOverviewRangeLoading: true, error: null })),
+          switchMap(({ dateFrom, dateTo }) =>
+            http.get<OperationOverviewRange>(`${API_URL}/overview/range`, {
+              params: { dateFrom, dateTo },
+            }).pipe(
+              tap((overviewRange) =>
+                patchState(store, {
+                  overviewRange,
+                  isOverviewRangeLoading: false,
+                  hasOverviewRangeLoaded: true,
+                })
+              ),
+              catchError((error) => {
+                patchState(store, {
+                  isOverviewRangeLoading: false,
+                  hasOverviewRangeLoaded: true,
+                  error: error.message || 'Failed to load operations overview range',
+                });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+
       createOperation: rxMethod<CreateOperationDto>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
@@ -121,6 +212,7 @@ export const OperationsStore = signalStore(
                 patchState(store, {
                   operations: [...store.operations(), newOperation],
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 notifications.success();
               }),

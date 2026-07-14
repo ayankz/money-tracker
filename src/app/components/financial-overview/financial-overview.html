@@ -1,142 +1,62 @@
 <section class="balance-card" aria-label="Financial overview">
   <div class="balance-card__header">
     <h2 class="balance-card__title">Financial Overview</h2>
-    <button class="balance-card__info" type="button" aria-label="Financial overview info">
-      <img src="/icons/overview-info.svg" alt="" aria-hidden="true" />
+    <button class="balance-card__info" type="button" aria-label="Выбрать период обзора">
+      <img src="/icons/calendar.svg" alt="" aria-hidden="true" />
     </button>
   </div>
 
-  <div class="balance-card__grid">
-    <div class="balance-card__column">
-      <div class="balance-card__metric">
-        <span class="balance-card__label">Weekly Earnings</span>
-        <div class="balance-card__value balance-card__value--earnings">
-          @if (weeklyEarnings() | noDataYet; as emptyState) {
-            <span class="balance-card__empty">
-              <span class="balance-card__empty-icon-wrap" aria-hidden="true">
-                <svg class="balance-card__empty-icon" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M5 8.5A2.5 2.5 0 0 1 7.5 6H17a2 2 0 0 1 2 2v1.5"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M5 10.5A2.5 2.5 0 0 1 7.5 8H18a1 1 0 0 1 1 1v8a2 2 0 0 1-2 2H7.5A2.5 2.5 0 0 1 5 16.5v-6Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linejoin="round"
-                  />
-                  <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" />
-                </svg>
-              </span>
-              <span>{{ emptyState }}</span>
-            </span>
-          } @else {
-            <img class="balance-card__icon" src="/icons/arrow-up.svg" alt="" aria-hidden="true" />
-            <span>${{ weeklyEarnings() | number:'1.2-2' }}</span>
+  @if (isLoading() && !overview()) {
+    <div class="balance-card__state">Загружаем обзор...</div>
+  } @else if (metricColumns().length) {
+    <div class="balance-card__grid">
+      @for (column of metricColumns(); track $index) {
+        <div class="balance-card__column">
+          @for (metric of column; track metric.label) {
+            <div class="balance-card__metric">
+              <span class="balance-card__label">{{ metric.label }}</span>
+              @if (metric.values.length) {
+                <div class="balance-card__values">
+                  @for (value of metric.values; track value.currency) {
+                    <div
+                      class="balance-card__value"
+                      [class.balance-card__value--earnings]="metric.kind === 'earnings'"
+                      [class.balance-card__value--spending]="metric.kind === 'spending'"
+                    >
+                      <img class="balance-card__icon" [src]="metric.icon" alt="" aria-hidden="true" />
+                      <span>{{ formatAmount(value) }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <span class="balance-card__empty">
+                  <span class="balance-card__empty-icon-wrap" aria-hidden="true">
+                    <svg class="balance-card__empty-icon" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M5 8.5A2.5 2.5 0 0 1 7.5 6H17a2 2 0 0 1 2 2v1.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M5 10.5A2.5 2.5 0 0 1 7.5 8H18a1 1 0 0 1 1 1v8a2 2 0 0 1-2 2H7.5A2.5 2.5 0 0 1 5 16.5v-6Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                      />
+                      <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <span>No data yet</span>
+                </span>
+              }
+            </div>
           }
         </div>
-      </div>
-
-      <div class="balance-card__metric">
-        <span class="balance-card__label">Monthly Earnings</span>
-        <div class="balance-card__value balance-card__value--earnings">
-          @if (monthlyEarnings() | noDataYet; as emptyState) {
-            <span class="balance-card__empty">
-              <span class="balance-card__empty-icon-wrap" aria-hidden="true">
-                <svg class="balance-card__empty-icon" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M5 8.5A2.5 2.5 0 0 1 7.5 6H17a2 2 0 0 1 2 2v1.5"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M5 10.5A2.5 2.5 0 0 1 7.5 8H18a1 1 0 0 1 1 1v8a2 2 0 0 1-2 2H7.5A2.5 2.5 0 0 1 5 16.5v-6Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linejoin="round"
-                  />
-                  <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" />
-                </svg>
-              </span>
-              <span>{{ emptyState }}</span>
-            </span>
-          } @else {
-            <img class="balance-card__icon" src="/icons/arrow-up.svg" alt="" aria-hidden="true" />
-            <span>${{ monthlyEarnings() | number:'1.2-2' }}</span>
-          }
-        </div>
-      </div>
+      }
     </div>
-
-    <div class="balance-card__column">
-      <div class="balance-card__metric">
-        <span class="balance-card__label">Weekly Spending</span>
-        <div class="balance-card__value balance-card__value--spending">
-          @if (weeklySpending() | noDataYet; as emptyState) {
-            <span class="balance-card__empty">
-              <span class="balance-card__empty-icon-wrap" aria-hidden="true">
-                <svg class="balance-card__empty-icon" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M5 8.5A2.5 2.5 0 0 1 7.5 6H17a2 2 0 0 1 2 2v1.5"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M5 10.5A2.5 2.5 0 0 1 7.5 8H18a1 1 0 0 1 1 1v8a2 2 0 0 1-2 2H7.5A2.5 2.5 0 0 1 5 16.5v-6Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linejoin="round"
-                  />
-                  <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" />
-                </svg>
-              </span>
-              <span>{{ emptyState }}</span>
-            </span>
-          } @else {
-            <img class="balance-card__icon" src="/icons/arrow-down.svg" alt="" aria-hidden="true" />
-            <span>${{ weeklySpending() | number:'1.2-2' }}</span>
-          }
-        </div>
-      </div>
-
-      <div class="balance-card__metric">
-        <span class="balance-card__label">Monthly Spending</span>
-        <div class="balance-card__value balance-card__value--spending">
-          @if (monthlySpending() | noDataYet; as emptyState) {
-            <span class="balance-card__empty">
-              <span class="balance-card__empty-icon-wrap" aria-hidden="true">
-                <svg class="balance-card__empty-icon" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M5 8.5A2.5 2.5 0 0 1 7.5 6H17a2 2 0 0 1 2 2v1.5"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M5 10.5A2.5 2.5 0 0 1 7.5 8H18a1 1 0 0 1 1 1v8a2 2 0 0 1-2 2H7.5A2.5 2.5 0 0 1 5 16.5v-6Z"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linejoin="round"
-                  />
-                  <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" />
-                </svg>
-              </span>
-              <span>{{ emptyState }}</span>
-            </span>
-          } @else {
-            <img class="balance-card__icon" src="/icons/arrow-down.svg" alt="" aria-hidden="true" />
-            <span>${{ monthlySpending() | number:'1.2-2' }}</span>
-          }
-        </div>
-      </div>
-    </div>
-  </div>
+  } @else {
+    <div class="balance-card__state">Нет данных</div>
+  }
 </section>
