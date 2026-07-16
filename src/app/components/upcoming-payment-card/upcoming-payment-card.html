@@ -1,6 +1,6 @@
 <div class="payment-card">
   <p class="due-date">
-    {{ dueDate() | date:'MMMM d' }}
+    {{ dueDate() | date:'d MMMM yyyy':'UTC':'ru' }}
     @if (frequency()) {
       <span>• {{ getFrequencyLabel() }}</span>
     }

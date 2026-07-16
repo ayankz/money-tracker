@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import type { UpcomingPayment } from '../../models/payment.model';
@@ -6,7 +7,7 @@ import { UpcomingPaymentsService } from '../../services/upcoming-payments/upcomi
 
 @Component({
   selector: 'app-upcoming-payment-details',
-  imports: [Header],
+  imports: [DatePipe, Header],
   templateUrl: './upcoming-payment-details.html',
   styleUrl: './upcoming-payment-details.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,15 +27,23 @@ export class UpcomingPaymentDetails {
     if (!this.upcomingPaymentsService.hasLoaded() && !this.upcomingPaymentsService.isLoading()) {
       this.upcomingPaymentsService.loadPayments();
     }
-
   }
 
-  protected formatAmount(payment: UpcomingPayment): string {
+  protected formatAmountValue(amount: number): string {
     return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: payment.currency,
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(payment.amount);
+    }).format(amount);
+  }
+
+  protected getCurrencySymbol(currency: string): string {
+    const symbols: Record<string, string> = {
+      KZT: '₸',
+      NZD: 'NZ$',
+      USD: '$',
+    };
+
+    return symbols[currency] ?? currency;
   }
 
   protected formatDate(value?: string | Date): string {
@@ -52,6 +61,7 @@ export class UpcomingPaymentDetails {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
+      timeZone: 'UTC',
     }).format(date);
   }
 
