@@ -186,7 +186,7 @@
     <button
       type="submit"
       class="entity-btn entity-btn--primary"
-      [disabled]="paymentForm.invalid || isSubmitting()"
+      [disabled]="paymentForm.invalid || isSubmitting() || !isOnline()"
       [attr.aria-busy]="isSubmitting()"
     >
       @if (isSubmitting()) {

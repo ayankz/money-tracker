@@ -151,7 +151,7 @@
     <button
       type="submit"
       class="entity-btn entity-btn--primary"
-      [disabled]="accountForm.invalid || isSubmitting()"
+      [disabled]="accountForm.invalid || isSubmitting() || !isOnline()"
       [attr.aria-busy]="isSubmitting()"
     >
       @if (isSubmitting()) {

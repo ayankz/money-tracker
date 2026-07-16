@@ -14,6 +14,8 @@ import { EntityFormShell } from '../../components/entity-form-shell/entity-form-
 import { Header } from '../../components/header/header';
 import { AccountsService } from '../../services/accounts/accounts';
 import { CategoryService } from '../../services/category.service';
+import { NetworkStatusService } from '../../services/network-status/network-status';
+import { NotificationsService } from '../../services/notifications/notifications';
 import { OperationsService } from '../../services/operations/operations';
 import type { Account } from '../../models/account.model';
 import type { Category } from '../../types/category.types';
@@ -40,9 +42,12 @@ export class AddTransaction {
   private readonly accountsService = inject(AccountsService);
   private readonly categoryService = inject(CategoryService);
   private readonly operationsService = inject(OperationsService);
+  private readonly networkStatusService = inject(NetworkStatusService);
+  private readonly notifications = inject(NotificationsService);
   private submittedOperationsCount: number | null = null;
 
   protected readonly isSubmitting = signal(false);
+  protected readonly isOnline = this.networkStatusService.isOnline;
   protected readonly selectedType = signal<OperationType>('EXPENSE');
   protected readonly operationTypes = [
     { value: 'EXPENSE', label: 'Расход' },
@@ -261,6 +266,11 @@ export class AddTransaction {
   }
 
   protected onSubmit(): void {
+    if (!this.isOnline()) {
+      this.notifications.error('Нет подключения к интернету');
+      return;
+    }
+
     if (this.transactionForm.invalid || this.isSubmitting()) {
       this.transactionForm.markAllAsTouched();
       return;

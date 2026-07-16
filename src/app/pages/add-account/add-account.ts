@@ -6,6 +6,8 @@ import { EntityFormShell } from '../../components/entity-form-shell/entity-form-
 import { Header } from '../../components/header/header';
 import type { CreateAccountDto } from '../../models/account.model';
 import { AccountsService } from '../../services/accounts/accounts';
+import { NetworkStatusService } from '../../services/network-status/network-status';
+import { NotificationsService } from '../../services/notifications/notifications';
 
 interface AccountFormValue {
   name: string;
@@ -27,8 +29,11 @@ export class AddAccount {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly accountsService = inject(AccountsService);
+  private readonly networkStatusService = inject(NetworkStatusService);
+  private readonly notifications = inject(NotificationsService);
 
   protected readonly isSubmitting = signal(false);
+  protected readonly isOnline = this.networkStatusService.isOnline;
   protected readonly selectedAccountType = signal<'CARD' | 'CASH'>('CARD');
   protected readonly selectedCurrency = signal<'KZT' | 'NZD' | 'USD'>('KZT');
   private submittedAccountsCount: number | null = null;
@@ -201,6 +206,11 @@ export class AddAccount {
   }
 
   protected onSubmit(): void {
+    if (!this.isOnline()) {
+      this.notifications.error('Нет подключения к интернету');
+      return;
+    }
+
     if (this.accountForm.invalid || this.isSubmitting()) {
       this.accountForm.markAllAsTouched();
       return;
