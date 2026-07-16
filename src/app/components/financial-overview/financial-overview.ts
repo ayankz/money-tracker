@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { NetworkStatusService } from '../../services/network-status/network-status';
 import { OperationsService } from '../../services/operations/operations';
 import type { OperationOverviewPeriod } from '../../store/operations.store';
 
@@ -22,6 +23,7 @@ interface FinancialOverviewMetric {
 })
 export class FinancialOverview {
   private readonly operationsService = inject(OperationsService);
+  private readonly networkStatusService = inject(NetworkStatusService);
 
   protected readonly overview = this.operationsService.overview;
   protected readonly isLoading = this.operationsService.isOverviewLoading;
@@ -45,9 +47,15 @@ export class FinancialOverview {
   });
 
   constructor() {
-    if (!this.operationsService.hasOverviewLoaded() && !this.operationsService.isOverviewLoading()) {
-      this.operationsService.loadOverview();
-    }
+    effect(() => {
+      if (!this.networkStatusService.isOnline()) {
+        return;
+      }
+
+      if (!this.operationsService.hasOverviewLoaded() && !this.operationsService.isOverviewLoading()) {
+        this.operationsService.loadOverview();
+      }
+    });
   }
 
   protected formatAmount(value: FinancialOverviewValue): string {
