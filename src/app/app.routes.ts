@@ -16,18 +16,22 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
+        data: { preload: true },
         loadComponent: () => import('./pages/home/home').then(m => m.Home)
       },
       {
         path: 'operations',
+        data: { preload: true },
         loadComponent: () => import('./pages/operations/operations').then(m => m.Operations)
       },
       {
         path: 'analytics',
+        data: { preload: true },
         loadComponent: () => import('./pages/analytics/analytics').then(m => m.Analytics)
       },
       {
         path: 'planned-payments',
+        data: { preload: true },
         loadComponent: () => import('./pages/planned-payments/planned-payments').then(m => m.PlannedPayments)
       },
       {
@@ -39,10 +43,12 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
+        data: { preload: true },
         loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
       },
       {
         path: 'my-money',
+        data: { preload: true },
         loadComponent: () => import('./pages/my-money/my-money').then(m => m.MyMoney)
       }
     ]
@@ -123,11 +129,13 @@ export const routes: Routes = [
   {
     path: 'auth',
     canActivate: [guestOnlyGuard],
+    data: { preload: true },
     loadComponent: () => import('./pages/auth/auth').then(m => m.Auth)
   },
   {
     path: 'signup',
     canActivate: [guestOnlyGuard],
+    data: { preload: true },
     loadComponent: () => import('./pages/signup/signup').then(m => m.Signup)
   }
 ];

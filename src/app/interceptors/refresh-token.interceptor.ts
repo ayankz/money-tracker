@@ -7,12 +7,17 @@ import {
 } from '@angular/common/http';
 import { catchError, from, Observable, shareReplay, switchMap, throwError } from 'rxjs';
 import { AuthService, type Tokens } from '../services/auth.service';
+import { environment } from '../../environments/environment';
 
 let refreshRequest$: Observable<Tokens> | null = null;
 
+function isApiRequest(url: string): boolean {
+  return url.startsWith('/api') || url.startsWith(`${environment.backendOrigin}/api`);
+}
+
 function shouldSkipRefresh(req: HttpRequest<unknown>): boolean {
   return (
-    !req.url.startsWith('/api') ||
+    !isApiRequest(req.url) ||
     req.url.includes('/api/auth/local/signin') ||
     req.url.includes('/api/auth/local/signup') ||
     req.url.includes('/api/auth/refresh')

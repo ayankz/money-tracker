@@ -1,0 +1,35 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  display: block;
+}
+
+.offline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 12px 12px;
+  border: 1px solid rgba(153, 27, 27, 0.12);
+  border-radius: 0 0 18px 18px;
+  background: rgba(254, 242, 242, 0.98);
+  color: #991b1b;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px;
+  box-shadow: 0 12px 28px rgba(153, 27, 27, 0.12);
+}
+
+.offline-banner__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.offline-banner__text {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}

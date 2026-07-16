@@ -185,7 +185,7 @@
     <button
       type="submit"
       class="entity-btn entity-btn--primary"
-      [disabled]="transferForm.invalid || isSubmitting()"
+      [disabled]="transferForm.invalid || isSubmitting() || !isOnline()"
       [attr.aria-busy]="isSubmitting()"
     >
       @if (isSubmitting()) {

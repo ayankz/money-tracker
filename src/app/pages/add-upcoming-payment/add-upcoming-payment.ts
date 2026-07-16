@@ -22,6 +22,8 @@ import { EntityFormShell } from '../../components/entity-form-shell/entity-form-
 import { Header } from '../../components/header/header';
 import { UpcomingPaymentsService } from '../../services/upcoming-payments/upcoming-payments';
 import { CategoryService } from '../../services/category.service';
+import { NetworkStatusService } from '../../services/network-status/network-status';
+import { NotificationsService } from '../../services/notifications/notifications';
 import type { Category } from '../../types/category.types';
 import type { CreateUpcomingPaymentDto } from '../../store/upcoming-payments.store';
 
@@ -51,9 +53,12 @@ export class AddUpcomingPayment {
   private readonly fb = inject(FormBuilder);
   private readonly upcomingPaymentsService = inject(UpcomingPaymentsService);
   private readonly categoryService = inject(CategoryService);
+  private readonly networkStatusService = inject(NetworkStatusService);
+  private readonly notifications = inject(NotificationsService);
   private submittedPaymentsCount: number | null = null;
 
   protected readonly isSubmitting = signal(false);
+  protected readonly isOnline = this.networkStatusService.isOnline;
   protected readonly selectedCurrency = signal<Currency>('NZD');
   protected readonly selectedFrequency = signal<Frequency>('MONTHLY');
   protected readonly selectedCategoryId = signal('');
@@ -232,6 +237,11 @@ export class AddUpcomingPayment {
   }
 
   protected onSubmit(): void {
+    if (!this.isOnline()) {
+      this.notifications.error('Нет подключения к интернету');
+      return;
+    }
+
     if (this.paymentForm.invalid || this.isSubmitting()) {
       this.paymentForm.markAllAsTouched();
       return;

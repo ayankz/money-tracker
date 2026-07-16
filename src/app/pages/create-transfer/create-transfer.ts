@@ -14,6 +14,8 @@ import { EntityFormShell } from '../../components/entity-form-shell/entity-form-
 import { Header } from '../../components/header/header';
 import type { Account } from '../../models/account.model';
 import { AccountsService } from '../../services/accounts/accounts';
+import { NetworkStatusService } from '../../services/network-status/network-status';
+import { NotificationsService } from '../../services/notifications/notifications';
 import { TransfersService } from '../../services/transfers/transfers';
 import type { CreateTransferDto } from '../../store/transfers.store';
 
@@ -39,10 +41,13 @@ export class CreateTransfer {
   private readonly fb = inject(FormBuilder);
   private readonly accountsService = inject(AccountsService);
   private readonly transfersService = inject(TransfersService);
+  private readonly networkStatusService = inject(NetworkStatusService);
+  private readonly notifications = inject(NotificationsService);
   private submittedTransfersCount: number | null = null;
   private isSyncingEqualCurrencyAmounts = false;
 
   protected readonly isSubmitting = signal(false);
+  protected readonly isOnline = this.networkStatusService.isOnline;
   protected readonly selectedFromAccountId = signal<number | null>(null);
   protected readonly selectedToAccountId = signal<number | null>(null);
   protected readonly accounts = computed<ReadonlyArray<Account>>(() => this.accountsService.accounts());
@@ -70,7 +75,7 @@ export class CreateTransfer {
   protected readonly commentControl = this.transferForm.controls.comment as FormControl<string>;
 
   constructor() {
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       void this.accountsService.loadAccounts();
     }
 
@@ -155,6 +160,11 @@ export class CreateTransfer {
   }
 
   protected onSubmit(): void {
+    if (!this.isOnline()) {
+      this.notifications.error('Нет подключения к интернету');
+      return;
+    }
+
     if (this.transferForm.invalid || this.isSubmitting()) {
       this.transferForm.markAllAsTouched();
       return;

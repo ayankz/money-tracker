@@ -85,7 +85,7 @@ export class Operations {
       this.operationsService.loadOperations();
     }
 
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       this.accountsService.loadAccounts();
     }
 

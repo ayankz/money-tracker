@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { AccountsSection } from '../../components/cards-section/cards-section';
@@ -8,6 +8,7 @@ import { UpcomingPaymentsSection } from '../../components/upcoming-payments-sect
 import { SpendingAnalysis } from '../../components/spending-analysis/spending-analysis';
 import type { UpcomingPayment } from '../../models/payment.model';
 import { AccountsService } from '../../services/accounts/accounts';
+import { NetworkStatusService } from '../../services/network-status/network-status';
 import { UpcomingPaymentsService } from '../../services/upcoming-payments/upcoming-payments';
 
 @Component({
@@ -21,6 +22,7 @@ export class Home {
   private readonly router = inject(Router);
   private readonly accountsService = inject(AccountsService);
   private readonly upcomingPaymentsService = inject(UpcomingPaymentsService);
+  private readonly networkStatusService = inject(NetworkStatusService);
 
   protected readonly monthlyBudget = signal<number>(3000);
   protected readonly spent = signal<number>(2250);
@@ -40,13 +42,19 @@ export class Home {
   protected readonly upcomingPayments = this.upcomingPaymentsService.payments;
 
   constructor() {
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
-      void this.accountsService.loadAccounts();
-    }
+    effect(() => {
+      if (!this.networkStatusService.isOnline()) {
+        return;
+      }
 
-    if (!this.upcomingPaymentsService.hasLoaded() && !this.upcomingPaymentsService.isLoading()) {
-      this.upcomingPaymentsService.loadPayments();
-    }
+      if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
+        void this.accountsService.loadAccounts();
+      }
+
+      if (!this.upcomingPaymentsService.hasLoaded() && !this.upcomingPaymentsService.isLoading()) {
+        this.upcomingPaymentsService.loadPayments();
+      }
+    });
   }
 
   protected onPaymentClick(payment: UpcomingPayment): void {

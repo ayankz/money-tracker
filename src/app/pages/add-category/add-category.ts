@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { EntityFormShell } from '../../components/entity-form-shell/entity-form-shell';
 import { Header } from '../../components/header/header';
 import { CategoryService } from '../../services/category.service';
+import { NetworkStatusService } from '../../services/network-status/network-status';
+import { NotificationsService } from '../../services/notifications/notifications';
 import type { CategoryType, CreateCategoryDto } from '../../types/category.types';
 
 @Component({
@@ -23,10 +25,13 @@ export class AddCategory {
   private readonly categoryService = inject(CategoryService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly networkStatusService = inject(NetworkStatusService);
+  private readonly notifications = inject(NotificationsService);
   private submittedCategoriesCount: number | null = null;
 
   protected readonly selectedCategoryType = signal<CategoryType>('EXPENSE');
   protected readonly isSubmitting = signal(false);
+  protected readonly isOnline = this.networkStatusService.isOnline;
   protected readonly categoryTypes = [
     { value: 'EXPENSE', label: 'Расход' },
     { value: 'INCOME', label: 'Доход' },
@@ -84,6 +89,11 @@ export class AddCategory {
   }
 
   protected onSubmit(): void {
+    if (!this.isOnline()) {
+      this.notifications.error('Нет подключения к интернету');
+      return;
+    }
+
     if (this.categoryForm.invalid || this.isSubmitting()) {
       this.categoryForm.markAllAsTouched();
       return;

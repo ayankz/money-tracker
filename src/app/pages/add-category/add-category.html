@@ -53,7 +53,7 @@
     <button
       type="submit"
       class="entity-btn entity-btn--primary"
-      [disabled]="categoryForm.invalid || isSubmitting()"
+      [disabled]="categoryForm.invalid || isSubmitting() || !isOnline()"
       [attr.aria-busy]="isSubmitting()"
     >
       @if (isSubmitting()) {

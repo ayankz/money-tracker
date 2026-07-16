@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface HttpOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
@@ -14,7 +15,7 @@ export interface HttpOptions {
 })
 export class BaseHttp {
   protected http = inject(HttpClient);
-  protected baseUrl = '';
+  protected baseUrl = environment.backendOrigin;
 
   get<T>(url: string, options?: HttpOptions): Observable<T> {
     return this.http.get<T>(this.getFullUrl(url), options);
@@ -37,6 +38,14 @@ export class BaseHttp {
   }
 
   private getFullUrl(url: string): string {
-    return this.baseUrl ? `${this.baseUrl}${url}` : url;
+    if (/^https?:\/\//.test(url)) {
+      return url;
+    }
+
+    if (url.startsWith('/api')) {
+      return `${this.baseUrl}${url}`;
+    }
+
+    return url;
   }
 }
