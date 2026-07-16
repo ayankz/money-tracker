@@ -1,0 +1,63 @@
+<app-header title="Запланированный платеж" [showBackButton]="true" />
+
+<main class="payment-details-page">
+  @if (payment(); as payment) {
+    <section class="payment-details-card" aria-label="Данные платежа">
+      <div class="payment-details-hero">
+        <p class="payment-details-date">{{ formatDate(payment.dueDate) }}</p>
+        <h2 class="payment-details-title">{{ payment.title }}</h2>
+        <p class="payment-details-amount">{{ formatAmount(payment) }}</p>
+      </div>
+
+      <div class="payment-details-list">
+        <div class="payment-details-row">
+          <span>Периодичность</span>
+          <strong>{{ getFrequencyLabel(payment.frequency) }}</strong>
+        </div>
+
+        <div class="payment-details-row">
+          <span>Валюта</span>
+          <strong>{{ payment.currency }}</strong>
+        </div>
+
+        <div class="payment-details-row">
+          <span>Категория</span>
+          <strong>{{ payment.categoryName || 'Без категории' }}</strong>
+        </div>
+
+        <div class="payment-details-row">
+          <span>Статус</span>
+          <strong>{{ payment.isActive === false ? 'Архивирован' : 'Активен' }}</strong>
+        </div>
+
+        @if (payment.createdAt) {
+          <div class="payment-details-row">
+            <span>Создан</span>
+            <strong>{{ formatDate(payment.createdAt) }}</strong>
+          </div>
+        }
+
+      </div>
+
+      @if (payment.comment?.trim()) {
+        <div class="payment-details-comment">
+          <span>Комментарий</span>
+          <p>{{ payment.comment }}</p>
+        </div>
+      }
+    </section>
+
+    <button
+      class="archive-button"
+      type="button"
+      [disabled]="payment.isActive === false || isLoading()"
+      (click)="archivePayment(payment)"
+    >
+      Архивировать
+    </button>
+  } @else if (isLoading()) {
+    <p class="payment-details-state">Загружаем платеж...</p>
+  } @else {
+    <p class="payment-details-state">Платеж не найден</p>
+  }
+</main>

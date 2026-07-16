@@ -98,6 +98,31 @@
   cursor: not-allowed;
 }
 
+.entity-input[type='date'] {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  min-height: 56px;
+  font-family: inherit;
+  line-height: normal;
+  color-scheme: light;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.entity-input[type='date']::-webkit-date-and-time-value {
+  min-height: 1.2em;
+  text-align: left;
+}
+
+.entity-input[type='date']::-webkit-calendar-picker-indicator {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.75;
+  filter: invert(62%) sepia(20%) saturate(1035%) hue-rotate(332deg) brightness(91%) contrast(86%);
+}
+
 .entity-input-with-suffix {
   position: relative;
 }
