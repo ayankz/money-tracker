@@ -9,11 +9,13 @@ import { NotificationsService } from '../services/notifications/notifications';
 interface AccountsState {
   readonly accounts: ReadonlyArray<Account>;
   readonly isLoading: boolean;
+  readonly hasLoaded: boolean;
 }
 
 const initialState: AccountsState = {
   accounts: [],
   isLoading: false,
+  hasLoaded: false,
 };
 
 const API_URL = '/api/accounts' as const;
@@ -48,11 +50,13 @@ export const AccountsStore = signalStore(
                 patchState(store, {
                   accounts: accounts.map(normalizeAccount),
                   isLoading: false,
+                  hasLoaded: true,
                 })
               ),
               catchError(() => {
                 patchState(store, {
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 return of([]);
               })
@@ -70,6 +74,7 @@ export const AccountsStore = signalStore(
                 patchState(store, {
                   accounts: [...store.accounts(), normalizeAccount(newAccount)],
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 notifications.success();
               }),
@@ -93,6 +98,7 @@ export const AccountsStore = signalStore(
                 patchState(store, {
                   accounts: store.accounts().filter((account) => account.id !== id),
                   isLoading: false,
+                  hasLoaded: true,
                 });
                 notifications.success();
               }),

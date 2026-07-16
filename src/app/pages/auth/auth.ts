@@ -213,8 +213,6 @@ export class Auth {
         return;
       }
 
-   
-
       finishWithError('Google OAuth не вернул токены');
     };
 

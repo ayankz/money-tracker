@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { HttpErrorResponse, type HttpInterceptorFn, type HttpRequest } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { NotificationsService } from '../services/notifications/notifications';
+import { environment } from '../../environments/environment';
 
 interface BackendErrorResponse {
   readonly message: string;
@@ -10,8 +11,12 @@ interface BackendErrorResponse {
 const NETWORK_ERROR_MESSAGE = 'Нет подключения к интернету';
 const DEFAULT_ERROR_MESSAGE = 'Не удалось выполнить запрос';
 
+function isApiRequest(url: string): boolean {
+  return url.startsWith('/api') || url.startsWith(`${environment.backendOrigin}/api`);
+}
+
 function shouldSkipNotification(req: HttpRequest<unknown>): boolean {
-  return !req.url.startsWith('/api') || req.url.includes('/api/auth/refresh');
+  return !isApiRequest(req.url) || req.url.includes('/api/auth/refresh');
 }
 
 function isNetworkError(error: HttpErrorResponse): boolean {

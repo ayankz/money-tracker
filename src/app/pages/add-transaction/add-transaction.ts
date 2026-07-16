@@ -109,7 +109,7 @@ export class AddTransaction {
   });
 
   constructor() {
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       this.accountsService.loadAccounts();
     }
 

@@ -30,7 +30,7 @@ export class MyMoney {
   );
 
   constructor() {
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       void this.accountsService.loadAccounts();
     }
   }

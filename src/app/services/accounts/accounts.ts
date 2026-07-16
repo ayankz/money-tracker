@@ -15,6 +15,7 @@ export class AccountsService {
 
   readonly accounts = this.store.accounts;
   readonly isLoading = this.store.isLoading;
+  readonly hasLoaded = this.store.hasLoaded;
   readonly accountsCount = this.store.accountsCount;
   readonly hasAccounts = this.store.hasAccounts;
   readonly totalBalance = this.store.totalBalance;

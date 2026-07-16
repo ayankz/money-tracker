@@ -75,7 +75,7 @@ export class CreateTransfer {
   protected readonly commentControl = this.transferForm.controls.comment as FormControl<string>;
 
   constructor() {
-    if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
+    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       void this.accountsService.loadAccounts();
     }
 
