@@ -1,63 +1,69 @@
 <app-header title="Запланированный платеж" [showBackButton]="true" />
 
-<main class="payment-details-page">
+<div class="payment-details-page">
   @if (payment(); as payment) {
-    <section class="payment-details-card" aria-label="Данные платежа">
-      <div class="payment-details-hero">
-        <p class="payment-details-date">{{ formatDate(payment.dueDate) }}</p>
-        <h2 class="payment-details-title">{{ payment.title }}</h2>
-        <p class="payment-details-amount">{{ formatAmount(payment) }}</p>
-      </div>
+  <section class="payment-feature-card" aria-label="Главная информация о платеже">
+    <div>
+      <p class="payment-feature-date">{{ payment.dueDate | date:'d MMMM yyyy':'UTC':'ru' }}</p>
+      <h2 class="payment-feature-title">{{ payment.title }}</h2>
+    </div>
 
-      <div class="payment-details-list">
-        <div class="payment-details-row">
-          <span>Периодичность</span>
-          <strong>{{ getFrequencyLabel(payment.frequency) }}</strong>
-        </div>
+    <div class="payment-feature-amount">
+      <span class="payment-feature-amount__value">{{ formatAmountValue(payment.amount) }}</span>
+      <span class="payment-feature-amount__currency">{{ getCurrencySymbol(payment.currency) }}</span>
+    </div>
+  </section>
 
-        <div class="payment-details-row">
-          <span>Валюта</span>
-          <strong>{{ payment.currency }}</strong>
-        </div>
+  <section class="payment-details-list" aria-label="Детали платежа">
+    <div class="payment-details-row">
+      <span>Периодичность</span>
+      <strong>{{ getFrequencyLabel(payment.frequency) }}</strong>
+    </div>
 
-        <div class="payment-details-row">
-          <span>Категория</span>
-          <strong>{{ payment.categoryName || 'Без категории' }}</strong>
-        </div>
+    <div class="payment-details-row">
+      <span>Валюта</span>
+      <strong>{{ payment.currency }}</strong>
+    </div>
 
-        <div class="payment-details-row">
-          <span>Статус</span>
-          <strong>{{ payment.isActive === false ? 'Архивирован' : 'Активен' }}</strong>
-        </div>
+    <div class="payment-details-row">
+      <span>Категория</span>
+      <strong class="payment-details-category">
+        <span class="payment-details-category__dot" aria-hidden="true"></span>
+        {{ payment.categoryName || 'Без категории' }}
+      </strong>
+    </div>
 
-        @if (payment.createdAt) {
-          <div class="payment-details-row">
-            <span>Создан</span>
-            <strong>{{ formatDate(payment.createdAt) }}</strong>
-          </div>
-        }
+    <div class="payment-details-row">
+      <span>Статус</span>
+      <strong class="payment-status" [class.payment-status--archived]="payment.isActive === false">
+        {{ payment.isActive === false ? 'Архивирован' : 'Активен' }}
+      </strong>
+    </div>
 
-      </div>
+    @if (payment.createdAt) {
+    <div class="payment-details-row">
+      <span>Создан</span>
+      <strong>{{ formatDate(payment.createdAt) }}</strong>
+    </div>
+    }
+  </section>
 
-      @if (payment.comment?.trim()) {
-        <div class="payment-details-comment">
-          <span>Комментарий</span>
-          <p>{{ payment.comment }}</p>
-        </div>
-      }
-    </section>
+  @if (payment.comment?.trim()) {
+  <section class="payment-details-comment" aria-label="Комментарий">
+    <span>Комментарий</span>
+    <p>{{ payment.comment }}</p>
+  </section>
+  }
 
-    <button
-      class="archive-button"
-      type="button"
-      [disabled]="payment.isActive === false || isLoading()"
-      (click)="archivePayment(payment)"
-    >
+  <div class="payment-details-actions">
+    <button class="archive-button" type="button" [disabled]="payment.isActive === false || isLoading()"
+      (click)="archivePayment(payment)">
       Архивировать
     </button>
+  </div>
   } @else if (isLoading()) {
-    <p class="payment-details-state">Загружаем платеж...</p>
+  <p class="payment-details-state">Загружаем платеж...</p>
   } @else {
-    <p class="payment-details-state">Платеж не найден</p>
+  <p class="payment-details-state">Платеж не найден</p>
   }
-</main>
+</div>
