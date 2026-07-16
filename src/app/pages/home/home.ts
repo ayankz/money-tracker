@@ -8,6 +8,7 @@ import { UpcomingPaymentsSection } from '../../components/upcoming-payments-sect
 import { SpendingAnalysis } from '../../components/spending-analysis/spending-analysis';
 import type { UpcomingPayment } from '../../models/payment.model';
 import { AccountsService } from '../../services/accounts/accounts';
+import { UpcomingPaymentsService } from '../../services/upcoming-payments/upcoming-payments';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ import { AccountsService } from '../../services/accounts/accounts';
 export class Home {
   private readonly router = inject(Router);
   private readonly accountsService = inject(AccountsService);
+  private readonly upcomingPaymentsService = inject(UpcomingPaymentsService);
 
   protected readonly monthlyBudget = signal<number>(3000);
   protected readonly spent = signal<number>(2250);
@@ -35,39 +37,20 @@ export class Home {
     }))
   );
 
-  protected readonly upcomingPayments = signal<ReadonlyArray<UpcomingPayment>>([
-    {
-      id: '1',
-      title: 'Rent',
-      amount: 1200,
-      dueDate: '2026-01-12',
-      icon: 'home',
-    },
-    {
-      id: '2',
-      title: 'Internet',
-      amount: 80,
-      dueDate: '2026-01-15',
-      icon: 'wifi',
-    },
-    {
-      id: '3',
-      title: 'Electricity',
-      amount: 150,
-      dueDate: '2026-01-18',
-      icon: 'electric',
-    },
-  ]);
+  protected readonly upcomingPayments = this.upcomingPaymentsService.payments;
 
   constructor() {
     if (!this.accountsService.hasAccounts() && !this.accountsService.isLoading()) {
       void this.accountsService.loadAccounts();
     }
+
+    if (!this.upcomingPaymentsService.hasLoaded() && !this.upcomingPaymentsService.isLoading()) {
+      this.upcomingPaymentsService.loadPayments();
+    }
   }
 
   protected onPaymentClick(payment: UpcomingPayment): void {
-    console.log('Payment clicked:', payment);
-    // TODO: Navigate to payment details or open payment modal
+    void this.router.navigate(['/upcoming-payments', payment.id]);
   }
 
   protected openMyMoney(): void {

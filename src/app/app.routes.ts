@@ -31,6 +31,13 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/planned-payments/planned-payments').then(m => m.PlannedPayments)
       },
       {
+        path: 'upcoming-payments/:id',
+        loadComponent: () =>
+          import('./pages/upcoming-payment-details/upcoming-payment-details').then(
+            m => m.UpcomingPaymentDetails
+          )
+      },
+      {
         path: 'profile',
         loadComponent: () => import('./pages/profile/profile').then(m => m.Profile)
       },
@@ -83,6 +90,19 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./pages/add-transaction/add-transaction').then(m => m.AddTransaction)
+      }
+    ]
+  },
+  {
+    path: 'add-upcoming-payment',
+    outlet: 'sheet',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/bottom-sheet-layout/bottom-sheet-layout').then(m => m.BottomSheetLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/add-upcoming-payment/add-upcoming-payment').then(m => m.AddUpcomingPayment)
       }
     ]
   },

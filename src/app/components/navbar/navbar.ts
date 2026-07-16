@@ -36,6 +36,9 @@ export class Navbar {
       case 'transaction':
         this.router.navigate([{ outlets: { sheet: ['add-transaction'] } }]);
         break;
+      case 'upcomingPayment':
+        this.router.navigate([{ outlets: { sheet: ['add-upcoming-payment'] } }]);
+        break;
       case 'import':
         // TODO: Implement import functionality
         console.log('Import statement action');

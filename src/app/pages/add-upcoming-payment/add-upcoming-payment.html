@@ -1,0 +1,208 @@
+<app-header title="Добавить платеж" />
+
+<app-entity-form-shell [formGroup]="paymentForm" ariaLabel="Форма добавления платежа" (submitted)="onSubmit()">
+  <div entityFormContent class="entity-form-stack">
+    <div class="entity-field">
+      <label class="entity-label" for="upcoming-payment-title">
+        Название платежа
+        <span class="required">*</span>
+      </label>
+      <input
+        id="upcoming-payment-title"
+        type="text"
+        class="entity-input"
+        [class.error]="hasError('title')"
+        placeholder="например, Rent"
+        [formControl]="titleControl"
+        [attr.aria-invalid]="hasError('title')"
+        [attr.aria-describedby]="hasError('title') ? 'upcoming-payment-title-error' : null"
+      />
+      @if (hasError('title')) {
+        <span id="upcoming-payment-title-error" class="entity-error" role="alert">
+          {{ getErrorMessage('title') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="upcoming-payment-amount">
+        Сумма
+        <span class="required">*</span>
+      </label>
+      <div class="entity-input-with-suffix">
+        <input
+          id="upcoming-payment-amount"
+          type="text"
+          class="entity-input entity-input--with-suffix"
+          [class.error]="hasError('amount')"
+          placeholder="например, 1200"
+          inputmode="decimal"
+          [formControl]="amountControl"
+          (keydown)="blockNegativeAmountInput($event)"
+          [attr.aria-invalid]="hasError('amount')"
+          [attr.aria-describedby]="hasError('amount') ? 'upcoming-payment-amount-error' : null"
+        />
+        <span class="entity-input__suffix">{{ selectedCurrency() }}</span>
+      </div>
+      @if (hasError('amount')) {
+        <span id="upcoming-payment-amount-error" class="entity-error" role="alert">
+          {{ getErrorMessage('amount') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <span class="entity-label">
+        Валюта
+        <span class="required">*</span>
+      </span>
+      <div class="entity-radio-group" role="radiogroup" aria-label="Валюта платежа">
+        @for (currency of currencies; track currency.value) {
+          <label class="entity-radio" [class.entity-radio--disabled]="isSubmitting()">
+            <input
+              class="entity-radio__input"
+              type="radio"
+              name="upcomingPaymentCurrency"
+              [value]="currency.value"
+              [checked]="selectedCurrency() === currency.value"
+              [disabled]="isSubmitting()"
+              (change)="selectCurrency(currency.value)"
+            />
+            <span class="entity-radio__control" aria-hidden="true"></span>
+            <span class="entity-radio__label">{{ currency.label }}</span>
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="entity-field">
+      <span class="entity-label">
+        Периодичность
+        <span class="required">*</span>
+      </span>
+      <div class="entity-radio-group" role="radiogroup" aria-label="Периодичность платежа">
+        @for (frequency of frequencies; track frequency.value) {
+          <label class="entity-radio" [class.entity-radio--disabled]="isSubmitting()">
+            <input
+              class="entity-radio__input"
+              type="radio"
+              name="upcomingPaymentFrequency"
+              [value]="frequency.value"
+              [checked]="selectedFrequency() === frequency.value"
+              [disabled]="isSubmitting()"
+              (change)="selectFrequency(frequency.value)"
+            />
+            <span class="entity-radio__control" aria-hidden="true"></span>
+            <span class="entity-radio__label">{{ frequency.label }}</span>
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="upcoming-payment-date">
+        Следующая дата платежа
+        <span class="required">*</span>
+      </label>
+      <input
+        id="upcoming-payment-date"
+        type="text"
+        class="entity-input"
+        [class.error]="hasError('nextDueDate')"
+        placeholder="например, 2026-07-25"
+        inputmode="numeric"
+        [formControl]="nextDueDateControl"
+        [attr.aria-invalid]="hasError('nextDueDate')"
+        [attr.aria-describedby]="hasError('nextDueDate') ? 'upcoming-payment-date-error' : null"
+      />
+      @if (hasError('nextDueDate')) {
+        <span id="upcoming-payment-date-error" class="entity-error" role="alert">
+          {{ getErrorMessage('nextDueDate') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="upcoming-payment-category">
+        Категория
+        <span class="required">*</span>
+      </label>
+      <div class="entity-dropdown">
+        <button
+          id="upcoming-payment-category"
+          type="button"
+          class="entity-select entity-select--button"
+          [class.entity-select--open]="isCategoryDropdownOpen()"
+          [disabled]="isSubmitting()"
+          [attr.aria-expanded]="isCategoryDropdownOpen()"
+          aria-haspopup="listbox"
+          (click)="toggleCategoryDropdown()"
+        >
+          <span>{{ selectedCategoryLabel() }}</span>
+        </button>
+
+        @if (isCategoryDropdownOpen()) {
+          <div class="entity-dropdown__menu" role="listbox" aria-label="Выбор категории">
+            @for (category of expenseCategories(); track category.id) {
+              <button
+                type="button"
+                class="entity-dropdown__option"
+                [class.entity-dropdown__option--selected]="categoryIdControl.value === category.id"
+                (click)="selectCategory(category.id)"
+              >
+                {{ category.name }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+      @if (hasError('categoryId')) {
+        <span class="entity-error" role="alert">
+          {{ getErrorMessage('categoryId') }}
+        </span>
+      }
+    </div>
+
+    <div class="entity-field">
+      <label class="entity-label" for="upcoming-payment-comment">Комментарий</label>
+      <textarea
+        id="upcoming-payment-comment"
+        class="entity-textarea"
+        [class.error]="hasError('comment')"
+        placeholder="например, Pay before landlord reminder"
+        [formControl]="commentControl"
+        [attr.aria-invalid]="hasError('comment')"
+        [attr.aria-describedby]="hasError('comment') ? 'upcoming-payment-comment-error' : null"
+      ></textarea>
+      @if (hasError('comment')) {
+        <span id="upcoming-payment-comment-error" class="entity-error" role="alert">
+          {{ getErrorMessage('comment') }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div entityFormActions>
+    <button
+      type="submit"
+      class="entity-btn entity-btn--primary"
+      [disabled]="paymentForm.invalid || isSubmitting()"
+      [attr.aria-busy]="isSubmitting()"
+    >
+      @if (isSubmitting()) {
+        <span class="entity-spinner" aria-hidden="true"></span>
+        <span>Добавление...</span>
+      } @else {
+        <span>Добавить платеж</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="entity-btn entity-btn--secondary"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+    >
+      Отмена
+    </button>
+  </div>
+</app-entity-form-shell>

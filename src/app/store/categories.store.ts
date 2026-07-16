@@ -4,14 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, of, pipe, switchMap, tap } from 'rxjs';
 import { BaseHttp } from '../services/base-http/base-http';
 import { NotificationsService } from '../services/notifications/notifications';
-import { ICON_OPTIONS } from '../constants/icon-options';
-import type { Category, CategoryType, CreateCategoryDto } from '../types/category.types';
-
-interface ApiCategory {
-  readonly id: string | number;
-  readonly name: string;
-  readonly type: CategoryType;
-}
+import type { ApiCategoryBase, Category, CategoryType, CreateCategoryDto } from '../types/category.types';
 
 interface CategoriesState {
   readonly categories: ReadonlyArray<Category>;
@@ -26,27 +19,12 @@ const initialState: CategoriesState = {
 };
 
 const API_URL = '/api/category' as const;
-const DEFAULT_ICON_ID = 'home' as const;
-const DEFAULT_ICON_COLOR = '#994ce6' as const;
-const DEFAULT_BACKGROUND_COLOR = '#ffdce3' as const;
 
-function getIconPath(iconId?: string): string {
-  return ICON_OPTIONS.find((icon) => icon.id === iconId)?.path
-    ?? ICON_OPTIONS.find((icon) => icon.id === DEFAULT_ICON_ID)?.path
-    ?? 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z';
-}
-
-function normalizeCategory(category: ApiCategory): Category {
-  const iconId = DEFAULT_ICON_ID;
-
+function normalizeCategory(category: ApiCategoryBase): Category {
   return {
     id: String(category.id),
     name: category.name,
     type: category.type,
-    iconId,
-    iconPath: getIconPath(iconId),
-    iconColor: DEFAULT_ICON_COLOR,
-    backgroundColor: DEFAULT_BACKGROUND_COLOR,
   };
 }
 
@@ -66,7 +44,7 @@ export const CategoriesStore = signalStore(
         pipe(
           tap(() => patchState(store, { isLoading: true })),
           switchMap(() =>
-            http.get<ApiCategory[]>(API_URL).pipe(
+            http.get<ApiCategoryBase[]>(API_URL).pipe(
               tap((categories) =>
                 patchState(store, {
                   categories: categories.map(normalizeCategory),
@@ -86,7 +64,7 @@ export const CategoriesStore = signalStore(
         pipe(
           tap((dto) => patchState(store, { isLoading: true, selectedType: dto.type })),
           switchMap((dto) =>
-            http.post<ApiCategory>(API_URL, dto).pipe(
+            http.post<ApiCategoryBase>(API_URL, dto).pipe(
               tap((createdCategory) => {
                 const normalized = normalizeCategory(createdCategory);
                 patchState(store, {

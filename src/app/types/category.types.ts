@@ -1,14 +1,14 @@
 export type CategoryType = 'INCOME' | 'EXPENSE';
 
 export interface Category {
-  id: string;
-  name: string;
-  type: CategoryType;
-  iconId: string;
-  iconPath: string;
-  iconColor: string;
-  backgroundColor: string;
+  readonly id: string;
+  readonly name: string;
+  readonly type: CategoryType;
 }
+
+export type ApiCategoryBase = Omit<Category, 'id'> & {
+  readonly id: string | number;
+};
 
 export interface CreateCategoryDto {
   readonly name: string;

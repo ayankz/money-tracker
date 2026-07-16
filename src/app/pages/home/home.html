@@ -7,7 +7,9 @@
     (transfer)="openTransfer()" (addAccount)="openAddAccount()" (removeAccount)="removeAccount($event)"
     (accountClick)="openMyMoney()" />
 
-  <app-upcoming-payments-section [payments]="upcomingPayments()" (paymentClick)="onPaymentClick($event)" />
+  @if (upcomingPayments().length > 0) {
+    <app-upcoming-payments-section [payments]="upcomingPayments()" (paymentClick)="onPaymentClick($event)" />
+  }
 
   <app-spending-analysis [monthlyBudget]="monthlyBudget()" [spent]="spent()" />
 </div>
