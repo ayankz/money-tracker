@@ -7,19 +7,26 @@ interface BackendErrorResponse {
   readonly message: string;
 }
 
+const NETWORK_ERROR_MESSAGE = 'Нет подключения к интернету';
+const DEFAULT_ERROR_MESSAGE = 'Не удалось выполнить запрос';
+
 function shouldSkipNotification(req: HttpRequest<unknown>): boolean {
   return !req.url.startsWith('/api') || req.url.includes('/api/auth/refresh');
+}
+
+function isNetworkError(error: HttpErrorResponse): boolean {
+  return error.status === 0;
 }
 
 function getErrorMessage(error: HttpErrorResponse): string {
   const payload = error.error as BackendErrorResponse | null;
 
   // Angular uses status 0 when the request failed before any HTTP response arrived.
-  if (error.status === 0) {
-    return 'Network error';
+  if (isNetworkError(error)) {
+    return NETWORK_ERROR_MESSAGE;
   }
 
-  return payload?.message?.trim() || 'Request failed';
+  return payload?.message?.trim() || DEFAULT_ERROR_MESSAGE;
 }
 
 export const errorNotificationInterceptor: HttpInterceptorFn = (req, next) => {
