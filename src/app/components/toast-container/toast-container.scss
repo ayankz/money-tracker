@@ -12,6 +12,10 @@
 }
 
 .toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 18px;
   padding: 14px 18px;
@@ -19,6 +23,7 @@
   color: #14213d;
   backdrop-filter: blur(14px);
   animation: toast-enter 250ms ease-out forwards;
+  pointer-events: auto;
 }
 
 .toast--success {
@@ -44,6 +49,18 @@
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.35;
+}
+
+.toast__action {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(29, 78, 216, 0.12);
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 8px 12px;
 }
 
 @keyframes toast-enter {

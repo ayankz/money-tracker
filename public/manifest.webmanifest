@@ -1,7 +1,7 @@
 {
-  "name": "Save to Dream",
-  "short_name": "SaveToDream",
-  "description": "Personal finance tracker to help you save for your dreams",
+  "name": "TabysGo",
+  "short_name": "TabysGo",
+  "description": "Учет расходов, доходов, счетов и запланированных платежей",
   "theme_color": "#d98e73",
   "background_color": "#fdfbf7",
   "display": "standalone",

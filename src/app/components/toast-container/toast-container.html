@@ -9,6 +9,11 @@
       [attr.role]="item.kind === 'error' ? 'alert' : 'status'"
     >
       <span class="toast__message">{{ item.message }}</span>
+      @if (item.action) {
+        <button class="toast__action" type="button" (click)="notifications.runAction(item)">
+          {{ item.action.label }}
+        </button>
+      }
     </div>
   }
 </div>

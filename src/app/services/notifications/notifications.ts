@@ -7,6 +7,17 @@ export interface NotificationItem {
   readonly kind: NotificationKind;
   readonly message: string;
   readonly closing: boolean;
+  readonly action?: NotificationAction;
+}
+
+export interface NotificationAction {
+  readonly label: string;
+  readonly handler: () => void;
+}
+
+export interface NotificationOptions {
+  readonly action?: NotificationAction;
+  readonly durationMs?: number | null;
 }
 
 const DEFAULT_DURATION_MS = 3000;
@@ -21,16 +32,16 @@ export class NotificationsService {
   private readonly dismissTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly removeTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-  success(message = 'Success!'): void {
-    this.show('success', message);
+  success(message = 'Success!', options?: NotificationOptions): void {
+    this.show('success', message, options);
   }
 
-  error(message: string): void {
-    this.show('error', message);
+  error(message: string, options?: NotificationOptions): void {
+    this.show('error', message, options);
   }
 
-  info(message: string): void {
-    this.show('info', message);
+  info(message: string, options?: NotificationOptions): void {
+    this.show('info', message, options);
   }
 
   dismiss(id: string): void {
@@ -52,18 +63,35 @@ export class NotificationsService {
     this.removeTimers.set(id, removeTimer);
   }
 
-  private show(kind: NotificationKind, message: string): void {
+  runAction(item: NotificationItem): void {
+    if (!item.action) {
+      return;
+    }
+
+    item.action.handler();
+    this.dismiss(item.id);
+  }
+
+  private show(kind: NotificationKind, message: string, options?: NotificationOptions): void {
     const normalizedMessage = message.trim();
     if (!normalizedMessage) {
       return;
     }
 
     const id = crypto.randomUUID();
-    this.items.update((items) => [...items, { id, kind, message: normalizedMessage, closing: false }]);
+    this.items.update((items) => [
+      ...items,
+      { id, kind, message: normalizedMessage, closing: false, action: options?.action },
+    ]);
 
+    if (options?.durationMs === null) {
+      return;
+    }
+
+    const durationMs = options?.durationMs ?? DEFAULT_DURATION_MS;
     const dismissTimer = setTimeout(() => {
       this.dismiss(id);
-    }, DEFAULT_DURATION_MS);
+    }, durationMs);
 
     this.dismissTimers.set(id, dismissTimer);
   }
