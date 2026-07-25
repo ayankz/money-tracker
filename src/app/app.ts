@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { OfflineBanner } from './components/offline-banner/offline-banner';
+import { PullToRefresh } from './components/pull-to-refresh/pull-to-refresh';
 import { ToastContainer } from './components/toast-container/toast-container';
 import { AppUpdateService } from './services/app-update/app-update';
 import { NetworkStatusService } from './services/network-status/network-status';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastContainer, OfflineBanner],
+  imports: [RouterOutlet, ToastContainer, OfflineBanner, PullToRefresh],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

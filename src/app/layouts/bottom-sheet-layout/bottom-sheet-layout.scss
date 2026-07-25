@@ -9,6 +9,7 @@
   -webkit-backdrop-filter: blur(6px);
   z-index: 120;
   animation: sheet-fade-in 180ms ease-out;
+  overscroll-behavior: contain;
 }
 
 .sheet-panel {
@@ -17,8 +18,16 @@
   background: var(--background);
   border-radius: 28px 28px 0 0;
   overflow: auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
   box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.16);
   animation: sheet-slide-up 220ms ease-out;
+  transition: transform 180ms ease-out;
+  will-change: transform;
+}
+
+.sheet-panel--dragging {
+  transition: none;
 }
 
 .sheet-handle {

@@ -6,24 +6,38 @@
           <p class="greeting-text">Good morning</p>
           <span class="user-name">{{ userName() }}</span>
         </div>
-        <button
-          class="profile-button"
-          type="button"
-          aria-label="Open profile menu"
-          [attr.aria-expanded]="showProfileMenu()"
-          (click)="toggleProfileMenu()"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
+        <div class="profile-actions">
+          @if (showRefreshButton()) {
+            <button
+              class="action-button"
+              type="button"
+              [class.action-button--loading]="appRefreshService.isRefreshing()"
+              [disabled]="appRefreshService.isRefreshing()"
+              [attr.aria-label]="refreshAriaLabel()"
+              (click)="onRefreshClick()"
+            >
+              <img class="action-button__icon" [src]="refreshIconSrc()" alt="" aria-hidden="true">
+            </button>
+          }
+          <button
+            class="profile-button"
+            type="button"
+            aria-label="Open profile menu"
+            [attr.aria-expanded]="showProfileMenu()"
+            (click)="toggleProfileMenu()"
           >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     } @else if (variant() === 'logo') {
       <div class="logo">
@@ -31,7 +45,7 @@
         <span class="logo__name">{{ logoName() }}</span>
       </div>
     } @else {
-      <div class="title-bar" [class.title-bar--with-action]="showActionButton()">
+      <div class="title-bar" [class.title-bar--with-action]="showActionButton() || showRefreshButton()">
         @if (showBackButton()) {
           <button
             class="back-button"
@@ -62,6 +76,17 @@
             (click)="onActionClick()"
           >
             <img class="action-button__icon" [src]="actionIconSrc()" alt="" aria-hidden="true">
+          </button>
+        } @else if (showRefreshButton()) {
+          <button
+            class="action-button"
+            type="button"
+            [class.action-button--loading]="appRefreshService.isRefreshing()"
+            [disabled]="appRefreshService.isRefreshing()"
+            [attr.aria-label]="refreshAriaLabel()"
+            (click)="onRefreshClick()"
+          >
+            <img class="action-button__icon" [src]="refreshIconSrc()" alt="" aria-hidden="true">
           </button>
         } @else {
           <div class="title-bar__spacer" aria-hidden="true"></div>

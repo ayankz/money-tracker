@@ -8,6 +8,7 @@ import {
 } from '../../components/operations-filters/operations-filters';
 import { AccountsService } from '../../services/accounts/accounts';
 import { CategoryService } from '../../services/category.service';
+import { NetworkStatusService } from '../../services/network-status/network-status';
 import { OperationsService } from '../../services/operations/operations';
 import type { Account } from '../../models/account.model';
 import type { Category } from '../../types/category.types';
@@ -39,6 +40,7 @@ export class Operations {
   private readonly operationsService = inject(OperationsService);
   private readonly accountsService = inject(AccountsService);
   private readonly categoryService = inject(CategoryService);
+  private readonly networkStatusService = inject(NetworkStatusService);
 
   protected readonly searchQuery = signal('');
   protected readonly showFilters = signal(false);
@@ -50,6 +52,7 @@ export class Operations {
   protected readonly operations = this.operationsService.operations;
   protected readonly categories = this.categoryService.categories;
   protected readonly isLoading = this.operationsService.isLoading;
+  protected readonly isOnline = this.networkStatusService.isOnline;
 
   protected readonly operationGroups = computed<ReadonlyArray<OperationGroup>>(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -81,15 +84,15 @@ export class Operations {
   );
 
   constructor() {
-    if (!this.operationsService.hasLoaded() && !this.operationsService.isLoading()) {
+    if (this.isOnline() && !this.operationsService.hasLoaded() && !this.operationsService.isLoading()) {
       this.operationsService.loadOperations();
     }
 
-    if (!this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
+    if (this.isOnline() && !this.accountsService.hasLoaded() && !this.accountsService.isLoading()) {
       this.accountsService.loadAccounts();
     }
 
-    if (!this.categoryService.hasCategories() && !this.categoryService.isLoading()) {
+    if (this.isOnline() && !this.categoryService.hasCategories() && !this.categoryService.isLoading()) {
       this.categoryService.loadCategories();
     }
   }
