@@ -84,17 +84,6 @@ header {
   &:active {
     transform: scale(0.95);
   }
-
-  &:disabled {
-    cursor: default;
-    opacity: 0.7;
-  }
-}
-
-.action-button--loading {
-  .action-button__icon {
-    animation: refresh-spin 0.8s linear infinite;
-  }
 }
 
 .action-button__icon {
@@ -108,12 +97,6 @@ header {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-}
-
-.profile-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .greeting {
@@ -203,11 +186,5 @@ header {
     &:hover {
       background-color: var(--background);
     }
-  }
-}
-
-@keyframes refresh-spin {
-  to {
-    transform: rotate(360deg);
   }
 }
