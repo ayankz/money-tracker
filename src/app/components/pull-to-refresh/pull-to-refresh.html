@@ -1,0 +1,13 @@
+<div
+  class="pull-refresh"
+  [class.pull-refresh--active]="pullDistance() > 0 || appRefreshService.isRefreshing()"
+  [style.transform]="'translate(-50%, ' + (pullDistance() / 4) + 'px)'"
+>
+  <span
+    class="pull-refresh__icon"
+    [class.pull-refresh__icon--spinning]="appRefreshService.isRefreshing()"
+  >
+    <img src="/icons/refresh.svg" alt="" aria-hidden="true">
+  </span>
+  <span>{{ appRefreshService.isRefreshing() ? 'Обновляем данные...' : 'Отпустите, чтобы обновить' }}</span>
+</div>

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { AppRefreshService } from '../../services/app-refresh/app-refresh';
 
 @Component({
   selector: 'app-header',
@@ -30,8 +31,12 @@ export class Header {
   readonly actionIconSrc = input<string>('');
   readonly actionAriaLabel = input<string>('Open action');
   readonly actionClick = output<void>();
+  readonly showRefreshButton = input<boolean>(true);
+  readonly refreshIconSrc = input<string>('/icons/refresh.svg');
+  readonly refreshAriaLabel = input<string>('Обновить данные');
 
   protected readonly showProfileMenu = signal<boolean>(false);
+  protected readonly appRefreshService = inject(AppRefreshService);
 
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -56,6 +61,10 @@ export class Header {
 
   protected onActionClick(): void {
     this.actionClick.emit();
+  }
+
+  protected onRefreshClick(): void {
+    this.appRefreshService.refresh();
   }
 
   @HostListener('document:click', ['$event'])
