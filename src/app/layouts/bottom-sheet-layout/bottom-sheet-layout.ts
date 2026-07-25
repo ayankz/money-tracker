@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -16,7 +17,6 @@ import { Router, RouterOutlet } from '@angular/router';
 })
 export class BottomSheetLayout {
   private readonly closeThreshold = 88;
-  private readonly maxDragOffset = 160;
   private touchStartY = 0;
   private touchStartScrollTop = 0;
 
@@ -24,6 +24,11 @@ export class BottomSheetLayout {
 
   protected readonly dragOffset = signal(0);
   protected readonly isDragging = signal(false);
+  protected readonly overlayOpacity = computed(() => {
+    const opacity = 0.38 - this.dragOffset() / 600;
+
+    return Math.max(0.08, opacity);
+  });
 
   @HostListener('document:keydown.escape')
   protected onEscapeKey(): void {
@@ -60,7 +65,7 @@ export class BottomSheetLayout {
 
     event.preventDefault();
     this.isDragging.set(true);
-    this.dragOffset.set(Math.min(distance, this.maxDragOffset));
+    this.dragOffset.set(Math.min(distance, this.getMaxDragOffset()));
   }
 
   protected onSheetTouchEnd(event: TouchEvent): void {
@@ -79,5 +84,9 @@ export class BottomSheetLayout {
 
   protected close(): void {
     this.router.navigate([{ outlets: { sheet: null } }], { replaceUrl: true });
+  }
+
+  private getMaxDragOffset(): number {
+    return Math.max(globalThis.innerHeight - 40, 360);
   }
 }
