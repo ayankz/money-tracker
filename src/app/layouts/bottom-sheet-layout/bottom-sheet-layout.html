@@ -5,7 +5,16 @@
   aria-label="Bottom sheet"
   (click)="onBackdropClick()"
 >
-  <section class="sheet-panel" (click)="$event.stopPropagation()">
+  <section
+    class="sheet-panel"
+    [class.sheet-panel--dragging]="isDragging()"
+    [style.transform]="dragOffset() ? 'translateY(' + dragOffset() + 'px)' : null"
+    (click)="$event.stopPropagation()"
+    (touchstart)="onSheetTouchStart($event)"
+    (touchmove)="onSheetTouchMove($event)"
+    (touchend)="onSheetTouchEnd($event)"
+    (touchcancel)="onSheetTouchEnd($event)"
+  >
     <div class="sheet-handle" aria-hidden="true"></div>
     <router-outlet />
   </section>

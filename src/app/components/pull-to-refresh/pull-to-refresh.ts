@@ -55,7 +55,9 @@ export class PullToRefresh {
     const target = event.target as HTMLElement | null;
 
     return Boolean(
-      target?.closest('input, textarea, select, button, a, [contenteditable="true"], .entity-dropdown')
+      target?.closest(
+        'input, textarea, select, button, a, [contenteditable="true"], .entity-dropdown, .sheet-overlay'
+      )
     );
   }
 
