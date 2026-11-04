@@ -1,3 +1,8 @@
+> Historical optional tooling notes. Current commands and paths are documented in
+> [README.md](README.md). Application code now lives in `apps/web` and `apps/api`;
+> the existing optional hooks remain at the repository root and are not activated
+> by this migration.
+
 # 🔍 Как работает Husky (под капотом)
 
 ## Проблема: Git не знает про Husky

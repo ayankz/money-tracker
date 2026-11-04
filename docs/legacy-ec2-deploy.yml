@@ -1,0 +1,242 @@
+# Historical EC2 deployment, still disabled. Current deployment: see README.md (Render).
+#name: 'CI/CD: Build → ECR → Deploy to EC2'
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#      - dev
+#
+#env:
+#  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+#  AWS_REGION: us-east-1
+#  ECR_REPOSITORY: expense-tracker-nest
+#  IMAGE_TAG: ${{ github.sha }}
+#
+#jobs:
+#  build_and_push:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      image_uri: ${{ steps.set_image.outputs.image_uri }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ env.AWS_REGION }}
+#
+#      - name: Create ECR repo if not exists
+#        run: |
+#          aws ecr describe-repositories --repository-names ${{ env.ECR_REPOSITORY }} || \
+#            aws ecr create-repository --repository-name ${{ env.ECR_REPOSITORY }}
+#
+#      - name: Login to ECR
+#        run: |
+#          aws ecr get-login-password --region ${{ env.AWS_REGION }} | \
+#            docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+#
+#      - name: Build & tag image
+#        run: |
+#          IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}
+#          docker build -f apps/api/Dockerfile -t $IMAGE_URI:${{ env.IMAGE_TAG }} -t $IMAGE_URI:latest .
+#
+#      - name: Push image
+#        run: |
+#          IMAGE_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}
+#          docker push $IMAGE_URI:${{ env.IMAGE_TAG }}
+#          docker push $IMAGE_URI:latest
+#
+#      - name: Save image_uri to file
+#        run: echo "${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}" > image_uri.txt
+#
+#      - name: Upload image_uri artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: image_uri
+#          path: image_uri.txt
+#
+#  deploy-dev-1:
+#    needs: build_and_push
+#    if: github.ref == 'refs/heads/dev'
+#    runs-on: ubuntu-latest
+#    env:
+#      DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+#    steps:
+#      - name: Download image_uri artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: image_uri
+#
+#      - name: Show contents of image_uri.txt
+#        run: cat image_uri.txt
+#
+#      - name: Read image_uri
+#        id: read_image
+#        run: |
+#          IMAGE_URI=$(cat image_uri.txt)
+#          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+#
+#          # Отладочная команда для проверки переменной окружения
+#          echo "Debug: IMAGE_URI is set to $IMAGE_URI"
+#
+#      - name: Deploy on EC2_DEV_1 via SSH
+#        uses: appleboy/ssh-action@v0.1.10
+#        with:
+#          host: ${{ secrets.EC2_HOST_DEV_1 }}
+#          username: ${{ secrets.EC2_USER }}
+#          key: ${{ secrets.EC2_SSH_KEY }}
+#          envs: IMAGE_URI,AWS_REGION,AWS_ACCOUNT_ID,DATABASE_URL
+#          script: |
+#            set -e
+#            echo "Using IMAGE_URI=$IMAGE_URI"
+#            echo "Using DATABASE_URL=$DATABASE_URL_DEV"
+#
+#            # install docker if missing
+#            if ! command -v docker >/dev/null 2>&1; then
+#              sudo dnf -y update
+#              sudo dnf -y install docker
+#              sudo systemctl enable --now docker
+#            fi
+#
+#            # login to ECR
+#            aws ecr get-login-password --region $AWS_REGION | \
+#              sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+#
+#            # pull image
+#            sudo docker pull $IMAGE_URI
+#
+#            # Run Prisma Migrations on EC2 (this is the new step)
+#            sudo docker run --rm \
+#              -e DATABASE_URL=$DATABASE_URL \
+#              $IMAGE_URI \
+#              npx prisma migrate deploy
+#
+#            # pull & restart container
+#            sudo docker stop nest-backend-dev || true
+#            sudo docker rm nest-backend-dev || true
+#            sudo docker run -d --name nest-backend-dev -p 4000:3333 --restart unless-stopped -e DATABASE_URL=$DATABASE_URL $IMAGE_URI
+#  deploy-dev-2:
+#    needs: build_and_push
+#    if: github.ref == 'refs/heads/dev'
+#    runs-on: ubuntu-latest
+#    env:
+#      DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+#    steps:
+#      - name: Download image_uri artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: image_uri
+#
+#      - name: Show contents of image_uri.txt
+#        run: cat image_uri.txt
+#
+#      - name: Read image_uri
+#        id: read_image
+#        run: |
+#          IMAGE_URI=$(cat image_uri.txt)
+#          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+#
+#          # Отладочная команда для проверки переменной окружения
+#          echo "Debug: IMAGE_URI is set to $IMAGE_URI"
+#
+#      - name: Deploy on EC2_DEV_2 via SSH
+#        uses: appleboy/ssh-action@v0.1.10
+#        with:
+#          host: ${{ secrets.EC2_HOST_DEV_2 }}
+#          username: ${{ secrets.EC2_USER }}
+#          key: ${{ secrets.EC2_SSH_KEY }}
+#          envs: IMAGE_URI,AWS_REGION,AWS_ACCOUNT_ID,DATABASE_URL
+#          script: |
+#            set -e
+#            echo "Using IMAGE_URI=$IMAGE_URI"
+#            echo "Using DATABASE_URL=$DATABASE_URL_DEV"
+#
+#            # install docker if missing
+#            if ! command -v docker >/dev/null 2>&1; then
+#              sudo dnf -y update
+#              sudo dnf -y install docker
+#              sudo systemctl enable --now docker
+#            fi
+#
+#            # login to ECR
+#            aws ecr get-login-password --region $AWS_REGION | \
+#              sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+#
+#            # pull image
+#            sudo docker pull $IMAGE_URI
+#
+#            # Run Prisma Migrations on EC2 (this is the new step)
+#            sudo docker run --rm \
+#              -e DATABASE_URL=$DATABASE_URL \
+#              $IMAGE_URI \
+#              npx prisma migrate deploy
+#
+#            # pull & restart container
+#            sudo docker stop nest-backend-dev || true
+#            sudo docker rm nest-backend-dev || true
+#            sudo docker run -d --name nest-backend-dev -p 4000:3333 --restart unless-stopped -e DATABASE_URL=$DATABASE_URL $IMAGE_URI
+#
+#  deploy:
+#    needs: build_and_push
+#    if: github.ref == 'refs/heads/main'
+#    runs-on: ubuntu-latest
+#    env:
+#      DATABASE_URL: ${{secrets.DATABASE_URL}}
+#    steps:
+#      - name: Download image_uri artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: image_uri
+#
+#      - name: Show contents of image_uri.txt
+#        run: cat image_uri.txt
+#
+#      - name: Read image_uri
+#        id: read_image
+#        run: |
+#          IMAGE_URI=$(cat image_uri.txt)
+#          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+#
+#          # Отладочная команда для проверки переменной окружения
+#          echo "Debug: IMAGE_URI is set to $IMAGE_URI"
+#
+#      - name: Deploy on EC2 via SSH
+#        uses: appleboy/ssh-action@v0.1.10
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USER }}
+#          key: ${{ secrets.EC2_SSH_KEY }}
+#          envs: IMAGE_URI,AWS_REGION,AWS_ACCOUNT_ID,DATABASE_URL
+#          script: |
+#            set -e
+#            echo "Using IMAGE_URI=$IMAGE_URI"
+#            echo "Using DATABASE_URL=$DATABASE_URL"
+#
+#            # install docker if missing
+#            if ! command -v docker >/dev/null 2>&1; then
+#              sudo dnf -y update
+#              sudo dnf -y install docker
+#              sudo systemctl enable --now docker
+#            fi
+#
+#            # login to ECR
+#            aws ecr get-login-password --region $AWS_REGION | \
+#              sudo docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+#
+#            # pull image
+#            sudo docker pull $IMAGE_URI
+#
+#            # Run Prisma Migrations on EC2 (this is the new step)
+#            sudo docker run --rm \
+#              -e DATABASE_URL=$DATABASE_URL \
+#              $IMAGE_URI \
+#              npx prisma migrate deploy
+#
+#            # pull & restart container
+#            sudo docker stop nest-backend || true
+#            sudo docker rm nest-backend || true
+#            sudo docker run -d --name nest-backend -p 3000:3333 --restart unless-stopped -e DATABASE_URL=$DATABASE_URL $IMAGE_URI

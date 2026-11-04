@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "angular",
+  "installCommand": "cd ../.. && npm ci --workspace apps/web",
+  "buildCommand": "npm run build:prod",
+  "outputDirectory": "dist/save-to-dream/browser",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://wallet-app-nest.onrender.com/api/:path*"
+    }
+  ]
+}

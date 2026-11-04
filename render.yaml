@@ -1,0 +1,13 @@
+# Reference for the EXISTING service; do not create a replacement service.
+# Keep existing environment variables, plan, region and database unchanged.
+# Apply the repository/path settings manually only after deployment approval.
+services:
+  - type: web
+    name: wallet-app-nest
+    runtime: docker
+    repo: https://github.com/ayankz/money-tracker
+    branch: main
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: 'off'
+    healthCheckPath: /api/health

@@ -1,47 +1,36 @@
 {
-  "name": "save-to-dream",
+  "name": "money-tracker",
   "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:prod": "ng build --configuration production",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:pwa": "npm run build:prod && cd dist/save-to-dream/browser && npx http-server -p 4200 -c-1"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
   "private": true,
   "packageManager": "npm@10.9.4",
-  "dependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/compiler": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/forms": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/router": "^21.0.0",
-    "@angular/service-worker": "21.1.2",
-    "@ngrx/signals": "^21.0.1",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10 <11"
   },
-  "devDependencies": {
-    "@angular/build": "^21.0.1",
-    "@angular/cli": "^21.0.1",
-    "@angular/compiler-cli": "^21.0.0",
-    "jsdom": "^27.1.0",
-    "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "start": "npm run dev:web",
+    "dev:web": "npm run start --workspace apps/web",
+    "dev:api": "npm run start:dev --workspace apps/api",
+    "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace apps/web",
+    "build:api": "npm run build --workspace apps/api",
+    "build:prod": "npm run build:prod --workspace apps/web",
+    "test": "npm run test:ci",
+    "test:ci": "node scripts/check.mjs test",
+    "test:web": "npm run test:ci --workspace apps/web",
+    "test:api": "npm test --workspace apps/api -- --runInBand",
+    "test:e2e": "npm run test:e2e --workspace apps/api -- --runInBand",
+    "type-check": "node scripts/check.mjs type-check",
+    "lint": "npm run lint:check --workspace apps/api",
+    "lint:fix": "npm run lint --workspace apps/api",
+    "prisma:generate": "npm run prisma:generate --workspace apps/api",
+    "prisma:validate": "npm run prisma:validate --workspace apps/api",
+    "prisma:migrate:deploy": "npm run prisma:migrate:deploy --workspace apps/api",
+    "serve:pwa": "npm run serve:pwa --workspace apps/web"
   }
 }

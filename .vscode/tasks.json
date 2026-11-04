@@ -23,6 +23,7 @@
     {
       "type": "npm",
       "script": "test",
+      "path": "apps/web",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",

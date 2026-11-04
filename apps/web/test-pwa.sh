@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+cd "$(dirname "$0")"
+
 # Script to test PWA locally
 # Usage: ./test-pwa.sh
 
