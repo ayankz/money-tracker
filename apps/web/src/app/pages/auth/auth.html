@@ -101,25 +101,7 @@
             {{ isLoading() ? 'Загрузка...' : 'Sign In' }}
           </button>
 
-          <div class="auth__divider">
-            <span class="auth__divider-text">or continue with</span>
-          </div>
-
-          <div class="auth__oauth">
-            <button
-              class="auth__oauth-btn"
-              type="button"
-              (click)="signInWithGoogle()"
-              [disabled]="isLoading()"
-            >
-              <img class="auth__oauth-icon" src="/icons/google.svg" alt="Google" />
-              <span>Google</span>
-            </button>
-            <!-- <button class="auth__oauth-btn" type="button">
-              <img class="auth__oauth-icon" src="/icons/apple.svg" alt="Apple">
-              <span>Apple</span>
-            </button> -->
-          </div>
+          <!-- Google sign-in is temporarily hidden while Safe Browsing review is pending. -->
         </form>
 
         <div class="auth__switch">
