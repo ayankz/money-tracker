@@ -1,3 +1,3 @@
 export const environment = {
-  backendOrigin: 'https://wallet-app-nest.onrender.com',
+  backendOrigin: 'https://money-tracker-auth-staging-api.onrender.com',
 };
