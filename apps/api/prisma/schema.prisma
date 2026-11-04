@@ -20,7 +20,10 @@ model User {
 
   email            String            @unique
   hash             String
-  hashRt           String?
+  hashRt           String? // Legacy column retained for data compatibility; no longer used.
+  googleSubject    String? @unique
+  sessions         AuthSession[]
+  oauthGrants      OAuthGrant[]
   Transaction      Transaction[]
   accounts         Account[]
   transfers        Transfer[]
@@ -148,4 +151,52 @@ enum AccountType {
 enum Frequency {
   WEEKLY
   MONTHLY
+}
+
+
+model AuthSession {
+  id            String         @id @default(uuid()) @db.Uuid
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  lastUsedAt    DateTime       @default(now())
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  userAgent     String?        @db.VarChar(200)
+  refreshTokens RefreshToken[]
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+model RefreshToken {
+  hash       String      @id @db.Char(64)
+  sessionId  String      @db.Uuid
+  session    AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+  consumedAt DateTime?
+
+  @@index([sessionId])
+  @@map("refresh_tokens")
+}
+
+model OAuthState {
+  hash        String   @id @db.Char(64)
+  bindingHash String   @db.Char(64)
+  expiresAt   DateTime
+
+  @@index([expiresAt])
+  @@map("oauth_states")
+}
+
+model OAuthGrant {
+  googleSubject String?
+  hash      String   @id @db.Char(64)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("oauth_grants")
 }

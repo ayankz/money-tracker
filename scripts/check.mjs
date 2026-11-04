@@ -1,7 +1,12 @@
 import { spawnSync } from 'node:child_process';
 
 const checks = {
-  test: [['apps/web', 'test:ci'], ['apps/api', 'test', '--', '--runInBand']],
+  test: [
+    ['apps/web', 'test:ci'],
+    ['apps/api', 'test', '--', '--runInBand'],
+    ['apps/api', 'test:auth-security'],
+    ['apps/web', 'test:auth'],
+  ],
   'type-check': [['apps/web', 'type-check'], ['apps/api', 'type-check']],
 };
 const commands = checks[process.argv[2]];

@@ -1,72 +1,24 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  HttpErrorResponse,
-  type HttpInterceptorFn,
-  type HttpRequest,
-} from '@angular/common/http';
-import { catchError, from, Observable, shareReplay, switchMap, throwError } from 'rxjs';
-import { AuthService, type Tokens } from '../services/auth.service';
-import { environment } from '../../environments/environment';
-
-let refreshRequest$: Observable<Tokens> | null = null;
-
-function isApiRequest(url: string): boolean {
-  return url.startsWith('/api') || url.startsWith(`${environment.backendOrigin}/api`);
-}
-
-function shouldSkipRefresh(req: HttpRequest<unknown>): boolean {
-  return (
-    !isApiRequest(req.url) ||
-    req.url.includes('/api/auth/local/signin') ||
-    req.url.includes('/api/auth/local/signup') ||
-    req.url.includes('/api/auth/refresh')
-  );
-}
-
-function runRefresh(authService: AuthService): Observable<Tokens> {
-  if (!refreshRequest$) {
-    refreshRequest$ = authService.refresh().pipe(shareReplay(1));
-    refreshRequest$.subscribe({
-      next: () => {
-        refreshRequest$ = null;
-      },
-      error: () => {
-        refreshRequest$ = null;
-      },
-    });
-  }
-
-  return refreshRequest$;
-}
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { catchError, switchMap, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { isApiRequest } from './api-request';
 
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
+  const auth = inject(AuthService);
   const router = inject(Router);
-
-  if (shouldSkipRefresh(req)) {
-    return next(req);
-  }
-
+  if (!isApiRequest(req.url)) return next(req);
   return next(req).pipe(
     catchError((error: unknown) => {
-      if (!(error instanceof HttpErrorResponse) || error.status !== 401) {
+      if (!(error instanceof HttpErrorResponse) || error.status !== 401)
         return throwError(() => error);
-      }
-
-      if (!authService.getRefreshToken()) {
-        authService.clearSession();
-        void router.navigateByUrl('/auth');
-        return throwError(() => error);
-      }
-
-      return runRefresh(authService).pipe(
+      return auth.refresh().pipe(
         switchMap(() => next(req)),
-        catchError((refreshError) => {
-          authService.clearSession();
-          return from(router.navigateByUrl('/auth')).pipe(
-            switchMap(() => throwError(() => refreshError))
-          );
+        catchError((refreshError: unknown) => {
+          auth.clearSession();
+          void router.navigateByUrl('/auth');
+          return throwError(() => refreshError);
         })
       );
     })

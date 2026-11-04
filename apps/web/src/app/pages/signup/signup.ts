@@ -25,7 +25,7 @@ export class Signup {
   form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(72)]],
   });
 
   private formEvents = toSignal(merge(this.form.statusChanges, this.form.valueChanges), {
@@ -60,7 +60,8 @@ export class Signup {
     const ctrl = this.form.controls.password;
     if (!ctrl.touched || !ctrl.errors) return null;
     if (ctrl.errors['required']) return 'Пароль обязателен';
-    if (ctrl.errors['minlength']) return 'Минимум 6 символов';
+    if (ctrl.errors['minlength']) return 'Минимум 12 символов';
+    if (ctrl.errors['maxlength']) return 'Максимум 72 символа (72 UTF-8 bytes)';
     return null;
   });
 

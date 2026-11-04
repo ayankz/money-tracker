@@ -80,6 +80,18 @@
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        },
+        "test-auth": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.auth-spec.json",
+            "include": [
+              "src/app/services/auth.service.spec.ts",
+              "src/app/pages/auth/oauth-message.spec.ts",
+              "src/app/pages/auth/auth.spec.ts"
+            ],
+            "watch": false
+          }
         }
       }
     }

@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://wallet-app-nest.onrender.com/api/:path*"
+      "destination": "https://money-tracker-auth-staging-api.onrender.com/api/:path*"
     }
   ]
 }

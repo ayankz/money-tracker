@@ -1,53 +1,77 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, AuthSession } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
-
-interface ProfileSetting {
-  id: number;
-  title: string;
-  icon: 'security' | 'notifications' | 'link' | 'support';
-  accent: 'purple' | 'peach' | 'green' | 'lavender';
-}
 
 @Component({
   selector: 'app-profile',
-  imports: [Header],
+  imports: [Header, DatePipe],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Profile {
+export class Profile implements OnInit {
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  private readonly auth = inject(AuthService);
+  protected readonly profileName = signal('Profile');
+  protected readonly profileEmail = signal('');
+  protected readonly sessions = signal<AuthSession[]>([]);
+  protected readonly showSessions = signal(false);
+  protected readonly busy = signal(false);
+  protected readonly message = signal<string | null>(null);
 
-  protected readonly profileName = signal('John Doe');
-  protected readonly profileEmail = signal('john.doe@example.com');
-
-  protected readonly settings: ProfileSetting[] = [
-    { id: 1, title: 'Security', icon: 'security', accent: 'purple' },
-    { id: 2, title: 'Notifications', icon: 'notifications', accent: 'peach' },
-    { id: 3, title: 'Linked Accounts', icon: 'link', accent: 'green' },
-    { id: 4, title: 'Support', icon: 'support', accent: 'lavender' },
-  ];
-
-  protected openSettings(): void {
-    console.log('Open profile settings');
-    // TODO: Implement profile settings flow
-  }
-
-  protected logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        void this.router.navigateByUrl('/auth', { replaceUrl: true });
+  ngOnInit(): void {
+    this.auth.me().subscribe({
+      next: (user) => {
+        this.profileEmail.set(user.email);
+        this.profileName.set(user.email.split('@')[0]);
       },
-      error: (error) => {
-        console.error('Logout failed:', error);
+      error: () => this.message.set('Unable to load your profile.'),
+    });
+  }
+  protected openSettings(): void {
+    this.showSessions.set(true);
+    this.loadSessions();
+  }
+  private loadSessions(): void {
+    this.busy.set(true);
+    this.auth.sessions().subscribe({
+      next: (sessions) => {
+        this.sessions.set(sessions);
+        this.busy.set(false);
+      },
+      error: () => {
+        this.message.set('Unable to load sessions.');
+        this.busy.set(false);
       },
     });
   }
-
-  protected trackById(_: number, item: ProfileSetting): number {
-    return item.id;
+  protected revoke(session: AuthSession): void {
+    this.busy.set(true);
+    this.message.set(null);
+    this.auth.revokeSession(session).subscribe({
+      next: () => {
+        if (session.current) void this.router.navigateByUrl('/auth');
+        else this.loadSessions();
+      },
+      error: () => {
+        this.message.set('Unable to revoke this session.');
+        this.busy.set(false);
+      },
+    });
+  }
+  protected logout(all = false): void {
+    this.busy.set(true);
+    this.message.set(null);
+    (all ? this.auth.logoutAll() : this.auth.logout()).subscribe({
+      next: () => {
+        void this.router.navigateByUrl('/auth', { replaceUrl: true });
+      },
+      error: () => {
+        this.message.set('Unable to sign out. Please try again.');
+        this.busy.set(false);
+      },
+    });
   }
 }
