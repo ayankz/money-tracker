@@ -1,25 +1,10 @@
 import { inject } from '@angular/core';
-import type { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
-import { environment } from '../../environments/environment';
-
-function isApiRequest(url: string): boolean {
-  return url.startsWith('/api') || url.startsWith(`${environment.backendOrigin}/api`);
-}
+import { isApiRequest } from './api-request';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
-
-  if (!token || !isApiRequest(req.url) || req.url.includes('/api/auth/refresh')) {
-    return next(req);
-  }
-
-  return next(
-    req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-  );
+  const token = inject(AuthService).getToken();
+  if (!token || !isApiRequest(req.url)) return next(req);
+  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
 };

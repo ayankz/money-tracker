@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "include": [
+    "src/app/services/auth.service.spec.ts",
+    "src/app/pages/auth/oauth-message.spec.ts",
+    "src/app/pages/auth/auth.spec.ts"
+  ]
+}

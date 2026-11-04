@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   computed,
   signal,
@@ -12,18 +13,8 @@ import { merge } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { Header } from '../../components/header/header';
-
-interface OAuthMessageData {
-  type?: string;
-  error?: string;
-  message?: string;
-  tokens?: {
-    access_token?: string;
-    accessToken?: string;
-    refresh_token?: string;
-    refreshToken?: string;
-  };
-}
+import { googleCode, googleError } from './oauth-message';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-auth',
@@ -42,24 +33,25 @@ export class Auth {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
+  readonly pendingGoogleCode = signal<string | null>(null);
   isLoading = signal(false);
   serverError = signal<string | null>(null);
   showPassword = signal(false);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required]],
   });
 
-  private formEvents = toSignal(
-    merge(this.form.statusChanges, this.form.valueChanges),
-    { initialValue: null }
-  );
+  private formEvents = toSignal(merge(this.form.statusChanges, this.form.valueChanges), {
+    initialValue: null,
+  });
 
   isValid = computed(() => {
     this.formEvents();
-    return this.form.valid;
+    return this.pendingGoogleCode() ? this.form.controls.password.valid : this.form.valid;
   });
 
   emailError = computed(() => {
@@ -97,6 +89,12 @@ export class Auth {
 
   onSubmit(): void {
     this.form.markAllAsTouched();
+    const code = this.pendingGoogleCode();
+    if (code) {
+      if (this.form.controls.password.invalid) return;
+      this.completeGoogle(code, this.form.controls.password.value ?? '');
+      return;
+    }
     if (this.form.invalid) return;
 
     this.setLoading(true);
@@ -123,13 +121,12 @@ export class Auth {
   signInWithGoogle(): void {
     if (this.isLoading()) return;
 
+    this.pendingGoogleCode.set(null);
     this.serverError.set(null);
     this.setLoading(true);
 
-    const left =
-      window.screenX + (window.outerWidth - this.GOOGLE_POPUP_WIDTH) / 2;
-    const top =
-      window.screenY + (window.outerHeight - this.GOOGLE_POPUP_HEIGHT) / 2;
+    const left = window.screenX + (window.outerWidth - this.GOOGLE_POPUP_WIDTH) / 2;
+    const top = window.screenY + (window.outerHeight - this.GOOGLE_POPUP_HEIGHT) / 2;
 
     const features = [
       `width=${this.GOOGLE_POPUP_WIDTH}`,
@@ -140,11 +137,7 @@ export class Auth {
       'scrollbars=yes',
     ].join(',');
 
-    const popup = window.open(
-      this.GOOGLE_OAUTH_URL,
-      'google-oauth',
-      features
-    );
+    const popup = window.open(this.GOOGLE_OAUTH_URL, 'google-oauth', features);
 
     if (!popup) {
       this.serverError.set('Браузер заблокировал popup окно');
@@ -153,10 +146,14 @@ export class Auth {
     }
 
     let isFinished = false;
+    let closeTimer: number | undefined;
+    let unregisterDestroy = () => {};
 
     const cleanup = () => {
       window.clearTimeout(timeout);
+      window.clearTimeout(closeTimer);
       window.clearInterval(closedCheckInterval);
+      unregisterDestroy();
       window.removeEventListener('message', onMessage);
     };
 
@@ -171,70 +168,65 @@ export class Auth {
       this.setLoading(false);
     };
 
-    const finishSilently = () => {
-      if (isFinished) return;
-
-      isFinished = true;
-      cleanup();
-      this.setLoading(false);
-    };
-
-    const finishWithTokens = (accessToken: string, refreshToken: string) => {
-      if (isFinished) return;
-
-      isFinished = true;
-      cleanup();
-
-      this.authService.saveTokens({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      this.setLoading(false);
-      void this.router.navigateByUrl('/home', { replaceUrl: true });
-    };
-
-    const readTokenPayload = (payload: OAuthMessageData) => {
-      const accessToken =
-        payload.tokens?.access_token ?? payload.tokens?.accessToken;
-
-      const refreshToken =
-        payload.tokens?.refresh_token ?? payload.tokens?.refreshToken;
-
-      if (accessToken && refreshToken) {
-        finishWithTokens(accessToken, refreshToken);
+    const onMessage = (event: MessageEvent<unknown>) => {
+      if (googleError(event, popup, this.BACKEND_ORIGIN)) {
+        finishWithError('Google sign-in was cancelled or failed. Please try again.');
         return;
       }
-
-      const oauthError = payload.error ?? payload.message;
-
-      if (oauthError) {
-        finishWithError(oauthError);
-        return;
-      }
-
-      finishWithError('Google OAuth не вернул токены');
-    };
-
-    const onMessage = (event: MessageEvent<OAuthMessageData>) => {
-      if (event.origin !== this.BACKEND_ORIGIN) return;
-      if (!event.data || typeof event.data !== 'object') return;
-
-      readTokenPayload(event.data);
+      const code = googleCode(event, popup, this.BACKEND_ORIGIN);
+      if (!code || isFinished) return;
+      isFinished = true;
+      cleanup();
+      popup.close();
+      this.completeGoogle(code);
     };
 
     window.addEventListener('message', onMessage);
 
     const closedCheckInterval = window.setInterval(() => {
-      if (popup.closed) {
-        finishSilently();
+      if (popup.closed && closeTimer === undefined) {
+        // Give an already queued success/error message time to arrive after close.
+        closeTimer = window.setTimeout(() => {
+          finishWithError('Google sign-in was cancelled or the sign-in window was closed.');
+        }, 500);
       }
     }, 500);
 
     const timeout = window.setTimeout(() => {
-      finishWithError(
-        'OAuth авторизация заняла слишком много времени. Повторите попытку.'
-      );
+      finishWithError('OAuth авторизация заняла слишком много времени. Повторите попытку.');
     }, this.OAUTH_TIMEOUT_MS);
+    unregisterDestroy = this.destroyRef.onDestroy(() => {
+      isFinished = true;
+      cleanup();
+      popup.close();
+    });
+  }
+  private completeGoogle(code: string, password?: string): void {
+    this.setLoading(true);
+    this.authService.exchangeGoogle(code, password).subscribe({
+      next: () => {
+        this.pendingGoogleCode.set(null);
+        this.setLoading(false);
+        void this.router.navigateByUrl('/home', { replaceUrl: true });
+      },
+      error: (error: unknown) => {
+        this.setLoading(false);
+        if (error instanceof HttpErrorResponse && error.status === 409) {
+          this.pendingGoogleCode.set(code);
+          this.serverError.set(
+            'Enter your existing account password to link Google. The code expires after one minute.'
+          );
+        } else {
+          this.pendingGoogleCode.set(null);
+          this.serverError.set(
+            'Google sign-in failed or expired. Please start Google sign-in again.'
+          );
+        }
+      },
+    });
+  }
+  cancelGoogleLink(): void {
+    this.pendingGoogleCode.set(null);
+    this.serverError.set(null);
   }
 }

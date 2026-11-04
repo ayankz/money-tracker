@@ -34,12 +34,24 @@ The workspace scripts run with `apps/api` as their working directory, preserving
 Nest's existing environment-file lookup. Never put secrets in Angular environment
 TypeScript files: those files are public browser configuration.
 
-Keep the existing `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
-`GOOGLE_CALLBACK_URL` and `FRONTEND_ORIGIN` values appropriate to your environment.
-For local OAuth, the callback remains
-`http://localhost:3333/api/auth/google/callback` and the frontend origin is
-`http://localhost:4200`. Real Google sign-in requires your existing authorized
-OAuth credentials; dummy values only permit a startup/redirect smoke check.
+Authentication now uses a session table, in-memory access JWTs and first-party
+HttpOnly refresh cookies. Required API settings are `DATABASE_URL`,
+`JWT_ACCESS_SECRET`, `CSRF_SECRET`, `FRONTEND_ORIGIN`, `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET` and `GOOGLE_CALLBACK_URL`. The two secrets must be independent,
+cryptographically random strings of at least 64 characters. `JWT_REFRESH_SECRET`
+is no longer used. Production requires HTTPS and Secure cookies.
+
+For local development use frontend origin `http://localhost:4200` and Google
+callback `http://localhost:3333/api/auth/google/callback`. Keep the existing `/api`
+proxy enabled: browser authentication uses relative URLs so refresh cookies remain
+first-party. Financial API calls retain their existing configured API origin.
+
+See [authentication design, environment variables, migration and validation](docs/authentication.md).
+The schema migration is additive and preserves existing users/password hashes and
+financial rows. Legacy sessions require a new sign-in. Existing legacy
+Google-only users need a trusted Google-subject backfill or recovery plan before
+rollout; their account/data are not deleted or merged. No deployments or production
+configuration changes have been applied.
 
 ```sh
 # Optional local PostgreSQL, preserving the existing compose service/volume:
@@ -57,8 +69,11 @@ npm run dev
 | `npm run dev:api` | Nest watch mode, default port 3333 (`PORT` can override) |
 | `npm run build` | Both production builds; API generates Prisma Client first |
 | `npm run build:web` / `npm run build:api` | Individual builds |
-| `npm test` / `npm run test:ci` | Both unit suites, non-interactive; reports both failures |
+| `npm test` / `npm run test:ci` | Both unit suites plus JWT security regressions; reports all failures |
 | `npm run test:web` / `npm run test:api` | Individual unit suites |
+| `npm run test:auth-security --workspace apps/api` | Focused auth configuration/JWT/Google regression suite |
+| `npm run test:auth --workspace apps/web` | Angular cookie, refresh/interceptor and popup regressions |
+| `npm run test:auth-integration --workspace apps/api` | Auth HTTP/PostgreSQL integration (explicit disposable test database required) |
 | `npm run test:e2e` | Existing backend end-to-end suite |
 | `npm run type-check` | Both TypeScript checks, including Angular test sources |
 | `npm run lint` | Existing backend ESLint, without modifying files |

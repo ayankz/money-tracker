@@ -11,7 +11,7 @@
   <section class="profile-hero">
     <div class="avatar-wrap">
       <div class="avatar" aria-hidden="true">
-        <span>JD</span>
+        <span>{{ profileName().slice(0, 2).toUpperCase() }}</span>
       </div>
     </div>
 
@@ -19,4 +19,43 @@
     <p>{{ profileEmail() }}</p>
   </section>
 
+  @if (message()) {
+    <p role="alert">{{ message() }}</p>
+  }
+  <button type="button" class="settings-item" (click)="openSettings()" [disabled]="busy()">
+    Manage sessions
+  </button>
+  @if (showSessions()) {
+    <section aria-label="Active sessions">
+      <h2 class="settings-title">Active sessions</h2>
+      <div class="settings-list">
+        @for (session of sessions(); track session.id) {
+          <div class="session-item">
+            <p>
+              {{ session.current ? 'This browser' : 'Other browser' }} —
+              {{ session.userAgent || 'Unknown device' }}
+            </p>
+            <p>
+              Last used {{ session.lastUsedAt | date: 'short' }} · Expires
+              {{ session.expiresAt | date: 'short' }}
+            </p>
+            <button
+              type="button"
+              class="settings-item"
+              [disabled]="busy()"
+              (click)="revoke(session)"
+            >
+              Sign out this session
+            </button>
+          </div>
+        }
+      </div>
+      <button type="button" class="logout-button" [disabled]="busy()" (click)="logout(true)">
+        Sign out all sessions
+      </button>
+    </section>
+  }
+  <button type="button" class="logout-button" [disabled]="busy()" (click)="logout()">
+    Sign out
+  </button>
 </section>

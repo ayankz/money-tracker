@@ -10,7 +10,8 @@
     "test": "ng test",
     "serve:pwa": "npm run build:prod && cd dist/save-to-dream/browser && npx http-server -p 4200 -c-1",
     "test:ci": "ng test --watch=false",
-    "type-check": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json"
+    "type-check": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json",
+    "test:auth": "ng run save-to-dream:test-auth"
   },
   "prettier": {
     "printWidth": 100,
