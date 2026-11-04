@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+set -e
+
 # Pre-push hook - более строгие проверки
 echo "🚀 Running pre-push checks..."
 

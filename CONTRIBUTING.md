@@ -1,3 +1,18 @@
+# Monorepo command update
+
+The current setup and commands are in [README.md](README.md). Run installs from
+the repository root. Angular source is in `apps/web/src`; Nest source is in
+`apps/api/src`. Use `npm run dev`, `npm run build`, `npm test`,
+`npm run type-check`, and `npm run lint` from the root. The latter checks the
+existing backend ESLint configuration; no frontend ESLint configuration is installed.
+Known pre-existing failures are recorded in
+[migration validation](docs/monorepo-migration.md).
+
+The Husky, lint-staged and commitlint notes below describe optional legacy tooling.
+Those tools are not installed or activated by the migration; do not run their
+dependency-installation helpers as part of the migration. Application dependency
+versions and the single root lockfile must remain unchanged.
+
 # Contributing Guide
 
 ## Git Workflow

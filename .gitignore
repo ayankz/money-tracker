@@ -53,3 +53,13 @@ credentials.json
 
 # PWA service worker cache
 ngsw-worker.js
+
+# Workspace outputs and all dotenv variants (at any depth).
+node_modules/
+dist/
+out-tsc/
+coverage/
+.angular/
+*.tsbuildinfo
+.env.*
+.vercel/

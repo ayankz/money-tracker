@@ -1,0 +1,36 @@
+{
+  "name": "money-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "npm@10.9.4",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10 <11"
+  },
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "start": "npm run dev:web",
+    "dev:web": "npm run start --workspace apps/web",
+    "dev:api": "npm run start:dev --workspace apps/api",
+    "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace apps/web",
+    "build:api": "npm run build --workspace apps/api",
+    "build:prod": "npm run build:prod --workspace apps/web",
+    "test": "npm run test:ci",
+    "test:ci": "node scripts/check.mjs test",
+    "test:web": "npm run test:ci --workspace apps/web",
+    "test:api": "npm test --workspace apps/api -- --runInBand",
+    "test:e2e": "npm run test:e2e --workspace apps/api -- --runInBand",
+    "type-check": "node scripts/check.mjs type-check",
+    "lint": "npm run lint:check --workspace apps/api",
+    "lint:fix": "npm run lint --workspace apps/api",
+    "prisma:generate": "npm run prisma:generate --workspace apps/api",
+    "prisma:validate": "npm run prisma:validate --workspace apps/api",
+    "prisma:migrate:deploy": "npm run prisma:migrate:deploy --workspace apps/api",
+    "serve:pwa": "npm run serve:pwa --workspace apps/web"
+  }
+}

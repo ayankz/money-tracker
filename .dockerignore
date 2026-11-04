@@ -1,0 +1,14 @@
+.git
+**/node_modules
+**/dist
+**/coverage
+**/.angular
+**/out-tsc
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.secret
+**/credentials.json
+**/*.log

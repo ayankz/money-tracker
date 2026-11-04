@@ -1,15 +1,12 @@
 {
-  "*.{ts,js}": [
-    "eslint --fix",
-    "prettier --write"
+  "apps/api/**/*.{ts,js}": [
+    "npm exec --workspace apps/api -- eslint --fix",
+    "npm exec --workspace apps/api -- prettier --write"
   ],
-  "*.{html,scss,css}": [
-    "prettier --write"
+  "apps/web/**/*.{ts,js,html,scss,css}": [
+    "npm exec --workspace apps/api -- prettier --write"
   ],
-  "*.json": [
-    "prettier --write"
-  ],
-  "*.md": [
-    "prettier --write"
+  "*.{json,md,mjs,yml}": [
+    "npm exec --workspace apps/api -- prettier --write"
   ]
 }

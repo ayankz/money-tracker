@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+set -e
+
 # Pre-commit hook
 echo "🔍 Running pre-commit checks..."
 

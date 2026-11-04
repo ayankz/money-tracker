@@ -1,3 +1,8 @@
+> Historical optional tooling notes. For current monorepo installation and checks,
+> use [README.md](README.md). Husky, lint-staged and commitlint are not installed
+> or activated automatically. The installer below adds dependencies and needs a
+> separate tooling decision; it is not part of this migration.
+
 # 🎣 Husky Setup Guide
 
 ## Установка зависимостей
