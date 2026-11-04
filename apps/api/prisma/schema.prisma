@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email            String            @unique
+  hash             String
+  hashRt           String?
+  Transaction      Transaction[]
+  accounts         Account[]
+  transfers        Transfer[]
+  upcomingPayments UpcomingPayment[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type    TransactionType
+  amount  Float
+  comment String?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  accountId Int?
+  account   Account? @relation(fields: [accountId], references: [id])
+
+  @@map("transactions")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String          @unique
+  type TransactionType
+
+  transactions     Transaction[]
+  upcomingPayments UpcomingPayment[]
+
+  @@map("categories")
+}
+
+model Account {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name       String
+  type       AccountType @default(CARD)
+  currency   Currency    @default(NZD)
+  balance    Decimal     @default(0.0)
+  cardName   String?
+  digits     String?
+  isArchived Boolean     @default(false)
+  archivedAt DateTime?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions  Transaction[]
+  transfersFrom Transfer[]    @relation("fromAccount")
+  transfersTo   Transfer[]    @relation("toAccount")
+
+  @@map("accounts")
+}
+
+model Transfer {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fromAccountId Int
+  toAccountId   Int
+
+  fromAccount Account @relation("fromAccount", fields: [fromAccountId], references: [id])
+  toAccount   Account @relation("toAccount", fields: [toAccountId], references: [id])
+
+  debitAmount  Decimal @default(0.0)
+  creditAmount Decimal @default(0.0)
+  comment      String?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transfers")
+}
+
+model UpcomingPayment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  amount      Decimal
+  currency    Currency
+  frequency   Frequency @default(WEEKLY)
+  nextDueDate DateTime
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  comment     String?
+  isActive    Boolean   @default(true)
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("upcoming_payments")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum Currency {
+  KZT
+  NZD
+  USD
+}
+
+enum AccountType {
+  CARD
+  CASH
+}
+
+enum Frequency {
+  WEEKLY
+  MONTHLY
+}
